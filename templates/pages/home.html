@@ -1,0 +1,65 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% block title %}Home | STL ACM Chapter{% endblock %}
+{% block meta_description %}STL ACM Chapter is a computing community for meetups, talks, networking, and practical learning.{% endblock %}
+{% block og_title %}Home | STL ACM Chapter{% endblock %}
+{% block og_description %}Join the STL ACM Chapter community for talks, networking, and practical computing ideas.{% endblock %}
+{% block twitter_title %}Home | STL ACM Chapter{% endblock %}
+{% block twitter_description %}Join the STL ACM Chapter community for talks, networking, and practical computing ideas.{% endblock %}
+
+{% block content %}
+{% if meetup_images %}
+<section class="meetup-slider">
+  <div class="slider-container">
+    <div class="slider">
+      {% for image in meetup_images %}
+      <div class="slide">
+        <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" loading="lazy">
+      </div>
+      {% endfor %}
+    </div>
+    <button class="slider-nav prev" aria-label="Previous image">❮</button>
+    <button class="slider-nav next" aria-label="Next image">❯</button>
+    <div class="slider-dots">
+      {% for image in meetup_images %}
+      <button class="dot" data-index="{{ forloop.counter0 }}" aria-label="Go to image {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="hero">
+  <p class="eyebrow">Computing Community</p>
+  <h1>STL ACM Chapter</h1>
+  <p class="lede">Join professionals, hobbyists, and students for chapter meetups and talks.</p>
+  <div class="event-grid">
+    <article>
+      <h2>Focus</h2>
+      <p>Technical talks and chapter networking.</p>
+    </article>
+  </div>
+  <div class="cta-row">
+    <a class="button primary" href="mailto:stlacmchapter@example.com">Get Involved</a>
+    <a class="button" href="mailto:stlacmchapter@example.com?subject=STL%20ACM%20Mailing%20List">Join Mailing List</a>
+  </div>
+</section>
+
+<section class="meetups-section">
+  <p class="eyebrow">Participating Meetups</p>
+  <div class="meetups-grid">
+    {% for meetup in participating_meetups %}
+    <article class="meetup-card">
+      <h2>{{ meetup.name }}</h2>
+      <p>{{ meetup.description }}</p>
+    </article>
+    {% empty %}
+    <article class="meetup-card">
+      <h2>Meetups Coming Soon</h2>
+      <p>Participating meetup groups will be published here.</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
