@@ -264,6 +264,16 @@ h1 {
   margin: 0 0 0.3rem;
 }
 
+.meetup-card h2 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.meetup-card h2 a:hover,
+.meetup-card h2 a:focus-visible {
+  text-decoration: underline;
+}
+
 .meetup-card p {
   margin: 0;
   color: var(--muted);
@@ -683,6 +693,91 @@ body.modal-open {
   margin-top: 1rem;
 }
 
+.meetup-detail,
+.meetup-events {
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 0.35rem;
+  padding: 1.1rem;
+}
+
+.meetup-events {
+  margin-top: 1rem;
+}
+
+.meetup-detail-top {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(100px, 140px) 1fr;
+  align-items: start;
+}
+
+.meetup-detail-logo {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.25rem;
+  background: #fff;
+  padding: 0.35rem;
+}
+
+.meetup-detail-description {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.meetup-events-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.meetup-events-head h2 {
+  margin: 0;
+}
+
+.meetup-events-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.meetup-events-list {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.meetup-event-row {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #bfd0ea;
+  border-radius: 0.28rem;
+  background: #f6faff;
+  color: #0a2446;
+  padding: 0.65rem 0.7rem;
+  cursor: pointer;
+}
+
+.meetup-event-row span {
+  display: block;
+  color: #436185;
+  font-size: 0.82rem;
+  margin-bottom: 0.15rem;
+}
+
+.meetup-event-row strong {
+  display: block;
+}
+
+.meetup-events-empty {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+}
+
 @media (max-width: 760px) {
   .calendar-header-row {
     align-items: stretch;
@@ -789,5 +884,18 @@ body.modal-open {
     min-height: 44px;
     padding-top: 0.72rem;
     padding-bottom: 0.72rem;
+  }
+
+  .meetup-detail,
+  .meetup-events {
+    padding: 0.9rem;
+  }
+
+  .meetup-detail-top {
+    grid-template-columns: 1fr;
+  }
+
+  .meetup-detail-logo {
+    max-width: 120px;
   }
 }

@@ -29,6 +29,9 @@ class MeetupImage(models.Model):
 class ParticipatingMeetup(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
+    website_url = models.URLField(blank=True)
+    logo_image = models.ImageField(upload_to='meetup_logos/', blank=True)
+    logo_url = models.URLField(blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

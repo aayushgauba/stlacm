@@ -51,7 +51,7 @@
   <div class="meetups-grid">
     {% for meetup in participating_meetups %}
     <article class="meetup-card">
-      <h2>{{ meetup.name }}</h2>
+      <h2><a href="{% url 'meetup-detail' meetup.id %}">{{ meetup.name }}</a></h2>
       <p>{{ meetup.description }}</p>
     </article>
     {% empty %}

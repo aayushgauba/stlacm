@@ -22,8 +22,8 @@ class MeetupImageAdmin(admin.ModelAdmin):
 
 @admin.register(ParticipatingMeetup)
 class ParticipatingMeetupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'order', 'is_active', 'created_at')
+    list_display = ('name', 'website_url', 'order', 'is_active', 'created_at')
     list_editable = ('order', 'is_active')
-    search_fields = ('name', 'description')
+    search_fields = ('name', 'description', 'website_url')
     list_filter = ('is_active',)
     ordering = ('order', 'name')

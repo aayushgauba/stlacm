@@ -1,0 +1,189 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}{{ meetup.name }} | STL ACM Chapter{% endblock %}
+{% block meta_description %}{{ meetup.description|truncatechars:155 }}{% endblock %}
+{% block og_title %}{{ meetup.name }} | STL ACM Chapter{% endblock %}
+{% block og_description %}{{ meetup.description|truncatechars:180 }}{% endblock %}
+{% block twitter_title %}{{ meetup.name }} | STL ACM Chapter{% endblock %}
+{% block twitter_description %}{{ meetup.description|truncatechars:180 }}{% endblock %}
+
+{% block content %}
+<section class="meetup-detail">
+  <p class="eyebrow">Participating Meetup</p>
+  <div class="meetup-detail-top">
+    {% if meetup.logo_image %}
+    <img src="{{ meetup.logo_image.url }}" alt="{{ meetup.name }} logo" class="meetup-detail-logo">
+    {% elif meetup.logo_url %}
+    <img src="{{ meetup.logo_url }}" alt="{{ meetup.name }} logo" class="meetup-detail-logo">
+    {% endif %}
+    <div>
+      <h1>{{ meetup.name }}</h1>
+      <p class="meetup-detail-description">{{ meetup.description }}</p>
+      {% if meetup.website_url %}
+      <p><a class="button primary" href="{{ meetup.website_url }}" target="_blank" rel="noopener noreferrer">Visit Meetup Page</a></p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="meetup-events">
+  <div class="meetup-events-head">
+    <h2>Events</h2>
+    <p>Last Updated {{ last_updated_pretty|default:"Unavailable" }}</p>
+  </div>
+  <div class="meetup-events-list">
+    {% for event in meetup_events %}
+    <button
+      type="button"
+      class="meetup-event-row"
+      data-group="{{ meetup.name }}"
+      data-title="{{ event.title|default:'' }}"
+      data-start="{{ event.start|default:'' }}"
+      data-venue="{% if event.venue %}{{ event.venue.name|default:'' }}{% endif %}"
+      data-url="{{ event.url|default:'' }}"
+      data-description="{{ event.description|default:'' }}"
+    >
+      <span>{{ event.start_pretty }}</span>
+      <strong>{{ event.title }}</strong>
+    </button>
+    {% empty %}
+    <p class="meetup-events-empty">No upcoming events found for this meetup.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<div id="eventModal" class="event-modal" aria-hidden="true" role="dialog" aria-labelledby="eventModalTitle">
+  <div class="event-modal-backdrop" id="eventModalBackdrop"></div>
+  <div class="event-modal-card">
+    <button type="button" class="event-modal-close" id="eventModalClose" aria-label="Close event details">×</button>
+    <p class="event-modal-eyebrow" id="eventModalGroup"></p>
+    <h2 id="eventModalTitle">Event</h2>
+    <p class="event-modal-meta" id="eventModalTime"></p>
+    <p class="event-modal-meta" id="eventModalVenue"></p>
+    <div class="event-modal-description" id="eventModalDescription"></div>
+    <div class="event-modal-actions">
+      <a id="eventModalLink" class="button primary" href="#" target="_blank" rel="noopener noreferrer">Event Page</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const eventModal = document.getElementById('eventModal');
+    const eventModalBackdrop = document.getElementById('eventModalBackdrop');
+    const eventModalClose = document.getElementById('eventModalClose');
+    const eventModalGroup = document.getElementById('eventModalGroup');
+    const eventModalTitle = document.getElementById('eventModalTitle');
+    const eventModalTime = document.getElementById('eventModalTime');
+    const eventModalVenue = document.getElementById('eventModalVenue');
+    const eventModalDescription = document.getElementById('eventModalDescription');
+    const eventModalLink = document.getElementById('eventModalLink');
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function inlineMarkdown(text) {
+      const withLinks = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (_m, label, href) {
+        return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+      });
+      return withLinks.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    function formatEventDescription(raw) {
+      const lines = String(raw || '').split(/\r?\n/);
+      const chunks = [];
+      let inList = false;
+
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          if (inList) {
+            chunks.push('</ul>');
+            inList = false;
+          }
+          return;
+        }
+
+        if (trimmed.startsWith('* ')) {
+          if (!inList) {
+            chunks.push('<ul>');
+            inList = true;
+          }
+          chunks.push('<li>' + inlineMarkdown(escapeHtml(trimmed.slice(2))) + '</li>');
+          return;
+        }
+
+        if (inList) {
+          chunks.push('</ul>');
+          inList = false;
+        }
+
+        chunks.push('<p>' + inlineMarkdown(escapeHtml(trimmed)) + '</p>');
+      });
+
+      if (inList) {
+        chunks.push('</ul>');
+      }
+
+      return chunks.join('');
+    }
+
+    function openEventModal(data) {
+      const start = data.start ? new Date(data.start) : null;
+      const timeText = start && !Number.isNaN(start.getTime())
+        ? start.toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          })
+        : 'Time unavailable';
+
+      eventModalGroup.textContent = data.group || 'Meetup Event';
+      eventModalTitle.textContent = data.title || 'Event';
+      eventModalTime.textContent = timeText;
+      eventModalVenue.textContent = data.venue ? 'Venue: ' + data.venue : 'Venue: TBA';
+      eventModalDescription.innerHTML = formatEventDescription(data.description || 'No description available.');
+      eventModalLink.href = data.url || '#';
+      eventModalLink.style.pointerEvents = data.url ? 'auto' : 'none';
+      eventModalLink.style.opacity = data.url ? '1' : '0.6';
+      eventModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeEventModal() {
+      eventModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    document.querySelectorAll('.meetup-event-row').forEach((row) => {
+      row.addEventListener('click', function () {
+        openEventModal({
+          group: row.dataset.group || '',
+          title: row.dataset.title || '',
+          start: row.dataset.start || '',
+          venue: row.dataset.venue || '',
+          url: row.dataset.url || '',
+          description: row.dataset.description || ''
+        });
+      });
+    });
+
+    eventModalClose.addEventListener('click', closeEventModal);
+    eventModalBackdrop.addEventListener('click', closeEventModal);
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Escape' && eventModal.getAttribute('aria-hidden') === 'false') {
+        closeEventModal();
+      }
+    });
+  }());
+</script>
+{% endblock %}
