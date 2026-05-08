@@ -1,0 +1,328 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Calendar | STL ACM Chapter{% endblock %}
+{% block meta_description %}STL ACM Chapter calendar of talks, workshops, and community events.{% endblock %}
+{% block og_title %}Calendar | STL ACM Chapter{% endblock %}
+{% block og_description %}Browse upcoming STL ACM Chapter events and meetup sessions.{% endblock %}
+{% block twitter_title %}Calendar | STL ACM Chapter{% endblock %}
+{% block twitter_description %}Browse upcoming STL ACM Chapter events and meetup sessions.{% endblock %}
+
+{% block content %}
+<section class="calendar-page">
+  <div class="calendar-titlebar">
+    <p class="calendar-brand">STL ACM Calendar</p>
+  </div>
+
+  <div class="calendar-surface">
+    <div class="calendar-header-row">
+      <h1 id="monthLabel" class="calendar-month">Month</h1>
+      <div class="calendar-view-switch" role="group" aria-label="Calendar views">
+        <button type="button" class="is-active">month</button>
+        <button type="button" disabled>week</button>
+        <button type="button" disabled>list</button>
+      </div>
+    </div>
+
+    <div class="calendar-controls">
+      <div class="calendar-nav-group">
+        <button type="button" id="prevMonthBtn" class="calendar-btn" aria-label="Previous month">❮</button>
+        <button type="button" id="nextMonthBtn" class="calendar-btn" aria-label="Next month">❯</button>
+      </div>
+      <button type="button" id="todayBtn" class="calendar-btn secondary">today</button>
+    </div>
+
+    <div class="calendar-grid-wrap">
+      <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Monthly calendar"></div>
+    </div>
+  </div>
+  <p class="calendar-updated">Last Updated <span id="lastUpdated"></span></p>
+</section>
+
+<div id="eventModal" class="event-modal" aria-hidden="true" role="dialog" aria-labelledby="eventModalTitle">
+  <div class="event-modal-backdrop" id="eventModalBackdrop"></div>
+  <div class="event-modal-card">
+    <button type="button" class="event-modal-close" id="eventModalClose" aria-label="Close event details">×</button>
+    <p class="event-modal-eyebrow" id="eventModalGroup"></p>
+    <h2 id="eventModalTitle">Event</h2>
+    <p class="event-modal-meta" id="eventModalTime"></p>
+    <p class="event-modal-meta" id="eventModalVenue"></p>
+    <p class="event-modal-description" id="eventModalDescription"></p>
+    <div class="event-modal-actions">
+      <a id="eventModalLink" class="button primary" href="#" target="_blank" rel="noopener noreferrer">Event Page</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const monthLabel = document.getElementById('monthLabel');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const prevMonthBtn = document.getElementById('prevMonthBtn');
+    const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const todayBtn = document.getElementById('todayBtn');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const eventModal = document.getElementById('eventModal');
+    const eventModalBackdrop = document.getElementById('eventModalBackdrop');
+    const eventModalClose = document.getElementById('eventModalClose');
+    const eventModalGroup = document.getElementById('eventModalGroup');
+    const eventModalTitle = document.getElementById('eventModalTitle');
+    const eventModalTime = document.getElementById('eventModalTime');
+    const eventModalVenue = document.getElementById('eventModalVenue');
+    const eventModalDescription = document.getElementById('eventModalDescription');
+    const eventModalLink = document.getElementById('eventModalLink');
+
+    const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = new Date();
+    let shownDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    const eventsByDate = {};
+
+    function ymd(dateObj) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatMonthTitle(dateObj) {
+      return dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    function formatTimeLabel(dateObj) {
+      return dateObj.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+      }).replace(':00', '').toLowerCase();
+    }
+
+    function eventTitle(groupName, eventObj) {
+      const startsAt = new Date(eventObj.start);
+      const timeLabel = formatTimeLabel(startsAt);
+      return `${timeLabel} ${groupName}`;
+    }
+
+    function normalizeEvents(apiPayload) {
+      const grouped = apiPayload.events || {};
+      Object.keys(grouped).forEach((groupName) => {
+        const groupEvents = grouped[groupName] || [];
+        groupEvents.forEach((eventObj) => {
+          if (!eventObj || !eventObj.start) return;
+          const startsAt = new Date(eventObj.start);
+          if (Number.isNaN(startsAt.getTime())) return;
+          const key = ymd(startsAt);
+          if (!eventsByDate[key]) eventsByDate[key] = [];
+          eventsByDate[key].push({
+            label: eventTitle(groupName, eventObj),
+            url: eventObj.url || '',
+            group: groupName,
+            title: eventObj.title || '',
+            venue: eventObj.venue && eventObj.venue.name ? eventObj.venue.name : '',
+            description: eventObj.description || '',
+            start: eventObj.start || ''
+          });
+        });
+      });
+
+      Object.keys(eventsByDate).forEach((key) => {
+        eventsByDate[key].sort((a, b) => a.label.localeCompare(b.label));
+      });
+    }
+
+    function openEventModal(eventObj) {
+      const start = eventObj.start ? new Date(eventObj.start) : null;
+      const timeText = start && !Number.isNaN(start.getTime())
+        ? start.toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          })
+        : 'Time unavailable';
+
+      eventModalGroup.textContent = eventObj.group || 'Meetup Event';
+      eventModalTitle.textContent = eventObj.title || eventObj.label;
+      eventModalTime.textContent = timeText;
+      eventModalVenue.textContent = eventObj.venue ? `Venue: ${eventObj.venue}` : 'Venue: TBA';
+      eventModalDescription.innerHTML = formatEventDescription(eventObj.description || 'No description available.');
+      eventModalLink.href = eventObj.url || '#';
+      eventModalLink.style.pointerEvents = eventObj.url ? 'auto' : 'none';
+      eventModalLink.style.opacity = eventObj.url ? '1' : '0.6';
+      eventModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function inlineMarkdown(text) {
+      const withLinks = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (_m, label, href) {
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      });
+      return withLinks.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    function formatEventDescription(raw) {
+      const lines = String(raw || '').split(/\r?\n/);
+      const chunks = [];
+      let inList = false;
+
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          if (inList) {
+            chunks.push('</ul>');
+            inList = false;
+          }
+          return;
+        }
+
+        if (trimmed.startsWith('* ')) {
+          if (!inList) {
+            chunks.push('<ul>');
+            inList = true;
+          }
+          const itemText = inlineMarkdown(escapeHtml(trimmed.slice(2)));
+          chunks.push(`<li>${itemText}</li>`);
+          return;
+        }
+
+        if (inList) {
+          chunks.push('</ul>');
+          inList = false;
+        }
+
+        const paragraphText = inlineMarkdown(escapeHtml(trimmed));
+        chunks.push(`<p>${paragraphText}</p>`);
+      });
+
+      if (inList) {
+        chunks.push('</ul>');
+      }
+
+      return chunks.join('');
+    }
+
+    function closeEventModal() {
+      eventModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    function renderCalendar() {
+      calendarGrid.innerHTML = '';
+      monthLabel.textContent = formatMonthTitle(shownDate);
+
+      weekdayLabels.forEach((day) => {
+        const header = document.createElement('div');
+        header.className = 'calendar-cell calendar-weekday';
+        header.textContent = day;
+        calendarGrid.appendChild(header);
+      });
+
+      const year = shownDate.getFullYear();
+      const month = shownDate.getMonth();
+      const firstOfMonth = new Date(year, month, 1);
+      const startDay = firstOfMonth.getDay();
+      const gridStart = new Date(year, month, 1 - startDay);
+
+      for (let i = 0; i < 42; i += 1) {
+        const date = new Date(gridStart);
+        date.setDate(gridStart.getDate() + i);
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell calendar-day';
+
+        const inCurrentMonth = date.getMonth() === month;
+        if (!inCurrentMonth) cell.classList.add('is-outside-month');
+        if (ymd(date) === ymd(today)) cell.classList.add('is-today');
+
+        const number = document.createElement('span');
+        number.className = 'date-number';
+        number.textContent = date.getDate();
+        cell.appendChild(number);
+
+        const key = ymd(date);
+        if (eventsByDate[key]) {
+          const list = document.createElement('ul');
+          list.className = 'event-list';
+          eventsByDate[key].forEach((eventObj) => {
+            const item = document.createElement('li');
+            item.className = 'event-item';
+            if (eventObj.url) {
+              const link = document.createElement('a');
+              link.href = eventObj.url;
+              link.setAttribute('role', 'button');
+              link.className = 'event-link';
+              link.textContent = eventObj.label;
+              link.title = eventObj.title || eventObj.label;
+              link.addEventListener('click', function (evt) {
+                evt.preventDefault();
+                openEventModal(eventObj);
+              });
+              item.appendChild(link);
+            } else {
+              const button = document.createElement('button');
+              button.type = 'button';
+              button.className = 'event-link event-link-btn';
+              button.textContent = eventObj.label;
+              button.addEventListener('click', function () {
+                openEventModal(eventObj);
+              });
+              item.appendChild(button);
+              item.title = eventObj.title || eventObj.label;
+            }
+            list.appendChild(item);
+          });
+          cell.appendChild(list);
+        }
+
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    prevMonthBtn.addEventListener('click', function () {
+      shownDate = new Date(shownDate.getFullYear(), shownDate.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    nextMonthBtn.addEventListener('click', function () {
+      shownDate = new Date(shownDate.getFullYear(), shownDate.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    todayBtn.addEventListener('click', function () {
+      shownDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      renderCalendar();
+    });
+    eventModalClose.addEventListener('click', closeEventModal);
+    eventModalBackdrop.addEventListener('click', closeEventModal);
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Escape' && eventModal.getAttribute('aria-hidden') === 'false') {
+        closeEventModal();
+      }
+    });
+
+    fetch("{% url 'calendar-events-api' %}")
+      .then((response) => response.json())
+      .then((payload) => {
+        normalizeEvents(payload);
+        if (payload.lastUpdatedPretty) {
+          lastUpdated.textContent = payload.lastUpdatedPretty;
+        } else {
+          lastUpdated.textContent = 'Unavailable';
+        }
+        renderCalendar();
+      })
+      .catch(() => {
+        lastUpdated.textContent = 'Unavailable';
+        renderCalendar();
+      });
+  }());
+</script>
+{% endblock %}
