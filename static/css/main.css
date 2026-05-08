@@ -585,6 +585,10 @@ h2 {
   background: #f9fbff;
 }
 
+.calendar-mobile-list {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .calendar-surface {
     padding: 0.8rem;
@@ -677,4 +681,113 @@ body.modal-open {
 
 .event-modal-actions {
   margin-top: 1rem;
+}
+
+@media (max-width: 760px) {
+  .calendar-header-row {
+    align-items: stretch;
+  }
+
+  .calendar-view-switch {
+    width: 100%;
+  }
+
+  .calendar-view-switch button {
+    flex: 1;
+    padding: 0.65rem 0.5rem;
+  }
+
+  .calendar-controls {
+    justify-content: space-between;
+  }
+
+  .calendar-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.72rem 0.95rem;
+  }
+
+  .calendar-grid-wrap {
+    display: none;
+  }
+
+  .calendar-mobile-list {
+    display: block;
+    margin-top: 0.95rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #bfd0ea;
+  }
+
+  .calendar-mobile-title {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+    font-family: 'Chakra Petch', sans-serif;
+    color: #102746;
+  }
+
+  .calendar-mobile-empty {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .calendar-mobile-day {
+    margin: 0.85rem 0 0.45rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.79rem;
+    color: #355680;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .calendar-mobile-event {
+    width: 100%;
+    text-align: left;
+    border: 1px solid #bfd0ea;
+    background: #f7fbff;
+    padding: 0.72rem 0.72rem;
+    margin: 0 0 0.45rem;
+    border-radius: 0.3rem;
+    color: #0b2646;
+  }
+
+  .calendar-mobile-event span {
+    display: block;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .calendar-mobile-event small {
+    display: block;
+    margin-top: 0.2rem;
+    color: #4a618b;
+    line-height: 1.3;
+  }
+
+  .event-modal-card {
+    width: 100%;
+    max-height: 82vh;
+    margin: auto 0 0;
+    border-radius: 0.8rem 0.8rem 0 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    padding: 1rem 0.9rem 1.1rem;
+  }
+
+  .event-modal-close {
+    top: 0.35rem;
+    right: 0.5rem;
+    font-size: 1.8rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .event-modal-actions .button {
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+    min-height: 44px;
+    padding-top: 0.72rem;
+    padding-bottom: 0.72rem;
+  }
 }

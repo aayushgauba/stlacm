@@ -34,6 +34,7 @@
     <div class="calendar-grid-wrap">
       <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Monthly calendar"></div>
     </div>
+    <div class="calendar-mobile-list" id="calendarMobileList" aria-live="polite"></div>
   </div>
   <p class="calendar-updated">Last Updated <span id="lastUpdated"></span></p>
 </section>
@@ -61,6 +62,7 @@
     const nextMonthBtn = document.getElementById('nextMonthBtn');
     const todayBtn = document.getElementById('todayBtn');
     const lastUpdated = document.getElementById('lastUpdated');
+    const calendarMobileList = document.getElementById('calendarMobileList');
     const eventModal = document.getElementById('eventModal');
     const eventModalBackdrop = document.getElementById('eventModalBackdrop');
     const eventModalClose = document.getElementById('eventModalClose');
@@ -284,6 +286,55 @@
 
         calendarGrid.appendChild(cell);
       }
+      renderMobileAgenda();
+    }
+
+    function renderMobileAgenda() {
+      calendarMobileList.innerHTML = '';
+      const year = shownDate.getFullYear();
+      const month = shownDate.getMonth();
+      const monthKeys = Object.keys(eventsByDate)
+        .filter((key) => {
+          const date = new Date(`${key}T00:00:00`);
+          return date.getFullYear() === year && date.getMonth() === month;
+        })
+        .sort();
+
+      const title = document.createElement('h2');
+      title.className = 'calendar-mobile-title';
+      title.textContent = 'This Month';
+      calendarMobileList.appendChild(title);
+
+      if (!monthKeys.length) {
+        const empty = document.createElement('p');
+        empty.className = 'calendar-mobile-empty';
+        empty.textContent = 'No events listed for this month.';
+        calendarMobileList.appendChild(empty);
+        return;
+      }
+
+      monthKeys.forEach((key) => {
+        const date = new Date(`${key}T00:00:00`);
+        const heading = document.createElement('p');
+        heading.className = 'calendar-mobile-day';
+        heading.textContent = date.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        });
+        calendarMobileList.appendChild(heading);
+
+        eventsByDate[key].forEach((eventObj) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'calendar-mobile-event';
+          btn.innerHTML = `<span>${eventObj.label}</span><small>${eventObj.title || 'Meetup event'}</small>`;
+          btn.addEventListener('click', function () {
+            openEventModal(eventObj);
+          });
+          calendarMobileList.appendChild(btn);
+        });
+      });
     }
 
     prevMonthBtn.addEventListener('click', function () {
