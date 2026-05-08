@@ -1,5 +1,5 @@
 """
-WSGI config for python4everything project.
+WSGI config for stlacm project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'python4everything.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'stlacm.settings')
 
 application = get_wsgi_application()
