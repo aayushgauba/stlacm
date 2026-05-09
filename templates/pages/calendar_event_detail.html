@@ -1,0 +1,42 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}{% if event and event.title %}{{ event.title }}{% else %}Event{% endif %} | STL ACM Chapter{% endblock %}
+{% block meta_description %}Event details for STL ACM Chapter calendar.{% endblock %}
+
+{% block content %}
+<section class="meetup-detail">
+  <p class="eyebrow">Calendar Event</p>
+  <div class="meetup-detail-top">
+    <div>
+      <h1>{% if event and event.title %}{{ event.title }}{% else %}Event{% endif %}</h1>
+      <p class="meetup-detail-description">{% if group %}Group: {{ group }}{% endif %}</p>
+      <p class="meetup-detail-description">{% if start %}Starts: {{ start }}{% endif %}</p>
+      {% if last_updated_pretty %}
+        <p class="meetup-detail-description">Last Updated {{ last_updated_pretty }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="meetup-events">
+  <div class="meetup-events-head">
+    <h2>Details</h2>
+  </div>
+  {% if event %}
+    {% if event.venue and event.venue.name %}
+      <p><strong>Venue:</strong> {{ event.venue.name }}</p>
+    {% endif %}
+    {% if event.description %}
+      <div class="event-modal-description">{{ event.description|linebreaksbr }}</div>
+    {% else %}
+      <p>No description available.</p>
+    {% endif %}
+    {% if event.url %}
+      <p><a class="button primary" href="{{ event.url }}" target="_blank" rel="noopener noreferrer">External Event Link</a></p>
+    {% endif %}
+  {% else %}
+    <p>Event not found (it may have been removed from the feed).</p>
+  {% endif %}
+</section>
+{% endblock %}
+

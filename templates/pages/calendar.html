@@ -49,7 +49,7 @@
     <p class="event-modal-meta" id="eventModalVenue"></p>
     <p class="event-modal-description" id="eventModalDescription"></p>
     <div class="event-modal-actions">
-      <a id="eventModalMeetupLink" class="button" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Meetup Page</a>
+      <a id="eventModalMeetupLink" class="button" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Meetup Site</a>
       <a id="eventModalLink" class="button primary" href="#" target="_blank" rel="noopener noreferrer">Event Page</a>
     </div>
   </div>
@@ -84,9 +84,9 @@
     meetupsList.forEach((item) => {
       if (!item) return;
       const primaryKey = normalizeName(item.name);
-      if (primaryKey) meetupByNormalizedName[primaryKey] = { id: item.id, name: item.name };
+      if (primaryKey) meetupByNormalizedName[primaryKey] = { id: item.id, name: item.name, website_url: item.website_url || '' };
       const altKey = normalizeName(item.calendar_group_name || '');
-      if (altKey) meetupByNormalizedName[altKey] = { id: item.id, name: item.name };
+      if (altKey) meetupByNormalizedName[altKey] = { id: item.id, name: item.name, website_url: item.website_url || '' };
     });
 
     const monthLabel = document.getElementById('monthLabel');
@@ -197,14 +197,17 @@
       eventModalTime.textContent = timeText;
       eventModalVenue.textContent = eventObj.venue ? `Venue: ${eventObj.venue}` : 'Venue: TBA';
       eventModalDescription.innerHTML = formatEventDescription(eventObj.description || 'No description available.');
-      eventModalLink.href = eventObj.url || '#';
-      eventModalLink.style.pointerEvents = eventObj.url ? 'auto' : 'none';
-      eventModalLink.style.opacity = eventObj.url ? '1' : '0.6';
+      const groupParam = encodeURIComponent(eventObj.group || '');
+      const startParam = encodeURIComponent(eventObj.start || '');
+      const titleParam = encodeURIComponent(eventObj.title || '');
+      eventModalLink.href = `/calendar/event/?group=${groupParam}&start=${startParam}&title=${titleParam}`;
+      eventModalLink.style.pointerEvents = 'auto';
+      eventModalLink.style.opacity = '1';
 
       const normalizedGroup = normalizeName(eventObj.group || '');
       const meetup = normalizedGroup ? meetupByNormalizedName[normalizedGroup] : null;
-      if (meetup && meetup.id) {
-        eventModalMeetupLink.href = `/meetups/${meetup.id}/`;
+      if (meetup && meetup.website_url) {
+        eventModalMeetupLink.href = meetup.website_url;
         eventModalMeetupLink.style.display = '';
       } else {
         eventModalMeetupLink.href = '#';
