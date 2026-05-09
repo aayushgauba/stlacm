@@ -90,34 +90,6 @@ def calendar_view(request):
     )
 
 
-def calendar_event_detail(request):
-    group = (request.GET.get("group") or "").strip()
-    start = (request.GET.get("start") or "").strip()
-    title = (request.GET.get("title") or "").strip()
-
-    payload = _fetch_events_payload()
-    events_map = payload.get("events", {}) or {}
-    group_events = _events_for_meetup(events_map, group) if group else []
-
-    event_obj = None
-    for item in group_events:
-        if start and (item.get("start") or "") != start:
-            continue
-        if title and (item.get("title") or "") != title:
-            continue
-        event_obj = item
-        break
-
-    context = {
-        "group": group,
-        "start": start,
-        "title": title,
-        "event": event_obj,
-        "last_updated_pretty": payload.get("lastUpdatedPretty"),
-    }
-    return render(request, "pages/calendar_event_detail.html", context)
-
-
 def calendar_events_api(request):
     try:
         with urlopen(EVENTS_API_URL, timeout=15) as response:

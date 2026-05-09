@@ -218,10 +218,7 @@
       eventModalTime.textContent = timeText;
       eventModalVenue.textContent = eventObj.venue ? `Venue: ${eventObj.venue}` : 'Venue: TBA';
       eventModalDescription.innerHTML = formatEventDescription(eventObj.description || 'No description available.');
-      const groupParam = encodeURIComponent(eventObj.group || '');
-      const startParam = encodeURIComponent(eventObj.start || '');
-      const titleParam = encodeURIComponent(eventObj.title || '');
-      eventModalLink.href = `/calendar/event/?group=${groupParam}&start=${startParam}&title=${titleParam}`;
+      eventModalLink.href = `/meetups/{{ meetup.id }}/`;
       eventModalLink.style.pointerEvents = 'auto';
       eventModalLink.style.opacity = '1';
       eventModal.setAttribute('aria-hidden', 'false');
