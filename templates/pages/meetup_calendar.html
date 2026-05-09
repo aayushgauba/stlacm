@@ -218,9 +218,12 @@
       eventModalTime.textContent = timeText;
       eventModalVenue.textContent = eventObj.venue ? `Venue: ${eventObj.venue}` : 'Venue: TBA';
       eventModalDescription.innerHTML = formatEventDescription(eventObj.description || 'No description available.');
-      eventModalLink.href = eventObj.url || '#';
-      eventModalLink.style.pointerEvents = eventObj.url ? 'auto' : 'none';
-      eventModalLink.style.opacity = eventObj.url ? '1' : '0.6';
+      const groupParam = encodeURIComponent(eventObj.group || '');
+      const startParam = encodeURIComponent(eventObj.start || '');
+      const titleParam = encodeURIComponent(eventObj.title || '');
+      eventModalLink.href = `/calendar/event/?group=${groupParam}&start=${startParam}&title=${titleParam}`;
+      eventModalLink.style.pointerEvents = 'auto';
+      eventModalLink.style.opacity = '1';
       eventModal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
     }
