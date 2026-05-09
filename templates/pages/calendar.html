@@ -55,7 +55,11 @@
   </div>
 </div>
 
-{{ participating_meetups|default:"[]"|json_script:"participatingMeetups" }}
+{% if participating_meetups %}
+  {{ participating_meetups|json_script:"participatingMeetups" }}
+{% else %}
+  <script id="participatingMeetups" type="application/json">[]</script>
+{% endif %}
 
 <script>
   (function () {
@@ -64,12 +68,20 @@
     const weekViewBtn = document.getElementById('weekViewBtn');
     const listViewBtn = document.getElementById('listViewBtn');
 
-    const meetupsRaw = JSON.parse(document.getElementById('participatingMeetups').textContent || '[]');
+    let meetupsRaw = JSON.parse(document.getElementById('participatingMeetups').textContent || '[]');
+    if (typeof meetupsRaw === 'string') {
+      try {
+        meetupsRaw = JSON.parse(meetupsRaw);
+      } catch (_e) {
+        meetupsRaw = [];
+      }
+    }
+    const meetupsList = Array.isArray(meetupsRaw) ? meetupsRaw : Object.values(meetupsRaw || {});
     const meetupByNormalizedName = {};
     function normalizeName(value) {
       return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     }
-    meetupsRaw.forEach((item) => {
+    meetupsList.forEach((item) => {
       if (!item) return;
       const key = normalizeName(item.name);
       if (!key) return;
