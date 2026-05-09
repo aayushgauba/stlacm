@@ -30,6 +30,7 @@ class ParticipatingMeetup(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     website_url = models.URLField(blank=True)
+    calendar_group_name = models.CharField(max_length=200, blank=True)
     logo_image = models.ImageField(upload_to='meetup_logos/', blank=True)
     logo_url = models.URLField(blank=True)
     order = models.PositiveIntegerField(default=0)

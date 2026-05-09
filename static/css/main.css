@@ -760,6 +760,10 @@ h2 {
   .calendar-surface {
     padding: 0.8rem;
   }
+
+  .calendar-view-switch #monthViewBtn {
+    display: none;
+  }
 }
 
 body.modal-open {

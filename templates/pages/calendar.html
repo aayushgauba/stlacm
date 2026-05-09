@@ -83,9 +83,10 @@
     }
     meetupsList.forEach((item) => {
       if (!item) return;
-      const key = normalizeName(item.name);
-      if (!key) return;
-      meetupByNormalizedName[key] = { id: item.id, name: item.name };
+      const primaryKey = normalizeName(item.name);
+      if (primaryKey) meetupByNormalizedName[primaryKey] = { id: item.id, name: item.name };
+      const altKey = normalizeName(item.calendar_group_name || '');
+      if (altKey) meetupByNormalizedName[altKey] = { id: item.id, name: item.name };
     });
 
     const monthLabel = document.getElementById('monthLabel');
@@ -111,6 +112,7 @@
     let shownDate = new Date(today.getFullYear(), today.getMonth(), 1);
     let weekAnchorDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     let currentView = 'month';
+    const mobileMq = window.matchMedia('(max-width: 760px)');
 
     const eventsByDate = {};
 
@@ -424,6 +426,17 @@
       renderCurrentView();
     }
 
+    function applyResponsiveView() {
+      const isMobile = mobileMq.matches;
+      monthViewBtn.disabled = isMobile;
+      monthViewBtn.setAttribute('aria-disabled', isMobile ? 'true' : 'false');
+      if (isMobile && currentView === 'month') {
+        setView('week');
+      } else {
+        renderCurrentView();
+      }
+    }
+
     function renderCurrentView() {
       if (currentView === 'month') {
         renderCalendar();
@@ -469,6 +482,7 @@
     });
 
     monthViewBtn.addEventListener('click', function () {
+      if (monthViewBtn.disabled) return;
       setView('month');
     });
 
@@ -497,12 +511,19 @@
         } else {
           lastUpdated.textContent = 'Unavailable';
         }
-        renderCurrentView();
+        applyResponsiveView();
       })
       .catch(() => {
         lastUpdated.textContent = 'Unavailable';
-        renderCurrentView();
+        applyResponsiveView();
       });
+
+    applyResponsiveView();
+    if (mobileMq.addEventListener) {
+      mobileMq.addEventListener('change', applyResponsiveView);
+    } else {
+      mobileMq.addListener(applyResponsiveView);
+    }
   }());
 </script>
 {% endblock %}

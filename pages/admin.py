@@ -12,5 +12,10 @@ class MailingListSubscriberAdmin(admin.ModelAdmin):
 
 admin.site.register(NewsItem)
 admin.site.register(MeetupImage)
-admin.site.register(ParticipatingMeetup)
 
+
+@admin.register(ParticipatingMeetup)
+class ParticipatingMeetupAdmin(admin.ModelAdmin):
+    list_display = ("name", "calendar_group_name", "is_active", "order")
+    search_fields = ("name", "calendar_group_name")
+    list_filter = ("is_active",)

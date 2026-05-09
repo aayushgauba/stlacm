@@ -79,7 +79,9 @@ def subscribe(request):
 
 def calendar_view(request):
     participating_meetups = list(
-        ParticipatingMeetup.objects.filter(is_active=True).values("id", "name")
+        ParticipatingMeetup.objects.filter(is_active=True).values(
+            "id", "name", "calendar_group_name"
+        )
     )
     return render(
         request,
@@ -109,7 +111,8 @@ def meetup_calendar_events_api(request, meetup_id):
     meetup = get_object_or_404(ParticipatingMeetup, pk=meetup_id, is_active=True)
     payload = _fetch_events_payload()
     events_map = payload.get("events", {}) or {}
-    meetup_events = _events_for_meetup(events_map, meetup.name)
+    feed_group = meetup.calendar_group_name or meetup.name
+    meetup_events = _events_for_meetup(events_map, feed_group)
     return JsonResponse(
         {
             "lastUpdated": payload.get("lastUpdated"),
@@ -143,6 +146,11 @@ def _events_for_meetup(events_map, meetup_name):
     wanted = _normalize_name(meetup_name)
     for group_name, items in events_map.items():
         if _normalize_name(group_name) == wanted:
+            return items
+
+    for group_name, items in events_map.items():
+        normalized_group = _normalize_name(group_name)
+        if wanted and (wanted in normalized_group or normalized_group in wanted):
             return items
     return []
 

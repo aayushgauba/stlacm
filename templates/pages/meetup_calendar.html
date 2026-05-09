@@ -102,6 +102,7 @@
     let shownDate = new Date(today.getFullYear(), today.getMonth(), 1);
     let weekAnchorDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     let currentView = 'month';
+    const mobileMq = window.matchMedia('(max-width: 760px)');
 
     const eventsByDate = {};
 
@@ -402,6 +403,17 @@
       renderCurrentView();
     }
 
+    function applyResponsiveView() {
+      const isMobile = mobileMq.matches;
+      monthViewBtn.disabled = isMobile;
+      monthViewBtn.setAttribute('aria-disabled', isMobile ? 'true' : 'false');
+      if (isMobile && currentView === 'month') {
+        setView('week');
+      } else {
+        renderCurrentView();
+      }
+    }
+
     function renderCurrentView() {
       if (currentView === 'month') {
         renderCalendar();
@@ -447,6 +459,7 @@
     });
 
     monthViewBtn.addEventListener('click', function () {
+      if (monthViewBtn.disabled) return;
       setView('month');
     });
 
@@ -471,12 +484,19 @@
       .then((payload) => {
         if (payload.lastUpdatedPretty) lastUpdated.textContent = payload.lastUpdatedPretty;
         normalizeEvents(payload);
-        renderCurrentView();
+        applyResponsiveView();
       })
       .catch(() => {
         lastUpdated.textContent = 'Unavailable';
-        renderCurrentView();
+        applyResponsiveView();
       });
+
+    applyResponsiveView();
+    if (mobileMq.addEventListener) {
+      mobileMq.addEventListener('change', applyResponsiveView);
+    } else {
+      mobileMq.addListener(applyResponsiveView);
+    }
   }());
 </script>
 {% endblock %}
