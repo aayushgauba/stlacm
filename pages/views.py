@@ -149,27 +149,4 @@ def _events_for_meetup(events_map, meetup_name):
 
 def meetup_detail(request, meetup_id):
     meetup = get_object_or_404(ParticipatingMeetup, pk=meetup_id, is_active=True)
-    if meetup.id == 1:
-        return render(request, "pages/meetup_calendar.html", {"meetup": meetup})
-    payload = _fetch_events_payload()
-    events_map = payload.get("events", {})
-    meetup_events = _events_for_meetup(events_map, meetup.name)
-    meetup_events = sorted(meetup_events, key=lambda item: item.get("start", ""))
-    for event in meetup_events:
-        start_raw = event.get("start", "")
-        try:
-            parsed = datetime.fromisoformat(start_raw)
-            day = parsed.strftime("%d").lstrip("0") or "0"
-            hour = parsed.strftime("%I").lstrip("0") or "0"
-            event["start_pretty"] = f"{parsed.strftime('%b')} {day}, {parsed.strftime('%Y')} {hour}:{parsed.strftime('%M')} {parsed.strftime('%p')}"
-        except ValueError:
-            event["start_pretty"] = start_raw
-    return render(
-        request,
-        "pages/meetup_detail.html",
-        {
-            "meetup": meetup,
-            "meetup_events": meetup_events,
-            "last_updated_pretty": payload.get("lastUpdatedPretty"),
-        },
-    )
+    return render(request, "pages/meetup_calendar.html", {"meetup": meetup})
