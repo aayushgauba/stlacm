@@ -49,8 +49,8 @@
     <p class="event-modal-meta" id="eventModalVenue"></p>
     <p class="event-modal-description" id="eventModalDescription"></p>
     <div class="event-modal-actions">
-      <a id="eventModalMeetupLink" class="button" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Meetup Site</a>
-      <a id="eventModalLink" class="button primary" href="#" style="display:none">ACM Page</a>
+      <a id="eventModalMeetupLink" class="button" href="#" target="_blank" rel="noopener noreferrer">Meetup Site</a>
+      <a id="eventModalLink" class="button primary" href="#">ACM Page</a>
     </div>
   </div>
 </div>
@@ -199,21 +199,15 @@
       eventModalDescription.innerHTML = formatEventDescription(eventObj.description || 'No description available.');
       const normalizedGroup = normalizeName(eventObj.group || '');
       const meetup = normalizedGroup ? meetupByNormalizedName[normalizedGroup] : null;
-      if (meetup && meetup.website_url) {
-        eventModalMeetupLink.href = meetup.website_url;
-        eventModalMeetupLink.style.display = '';
-      } else {
-        eventModalMeetupLink.href = '#';
-        eventModalMeetupLink.style.display = 'none';
-      }
+      const meetupSiteHref = (meetup && meetup.website_url) ? meetup.website_url : (eventObj.url || '');
+      eventModalMeetupLink.href = meetupSiteHref || '#';
+      eventModalMeetupLink.style.pointerEvents = meetupSiteHref ? 'auto' : 'none';
+      eventModalMeetupLink.style.opacity = meetupSiteHref ? '1' : '0.6';
 
-      if (meetup && meetup.id) {
-        eventModalLink.href = `/meetups/${meetup.id}/`;
-        eventModalLink.style.display = '';
-      } else {
-        eventModalLink.href = '#';
-        eventModalLink.style.display = 'none';
-      }
+      const acmHref = (meetup && meetup.id) ? `/meetups/${meetup.id}/` : '';
+      eventModalLink.href = acmHref || '#';
+      eventModalLink.style.pointerEvents = acmHref ? 'auto' : 'none';
+      eventModalLink.style.opacity = acmHref ? '1' : '0.6';
 
       eventModal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');

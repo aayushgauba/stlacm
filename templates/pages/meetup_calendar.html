@@ -67,7 +67,10 @@
     <p class="event-modal-meta" id="eventModalVenue"></p>
     <p class="event-modal-description" id="eventModalDescription"></p>
     <div class="event-modal-actions">
-      <a id="eventModalLink" class="button primary" href="#" target="_blank" rel="noopener noreferrer">Event Page</a>
+      {% if meetup.website_url %}
+        <a class="button" href="{{ meetup.website_url }}" target="_blank" rel="noopener noreferrer">Meetup Site</a>
+      {% endif %}
+      <a id="eventModalLink" class="button primary" href="#" target="_blank" rel="noopener noreferrer">ACM Page</a>
     </div>
   </div>
 </div>
