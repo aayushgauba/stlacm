@@ -42,7 +42,7 @@
   </div>
   <div class="cta-row">
     <a class="button primary" href="mailto:stlacmchapter@example.com">Get Involved</a>
-    <a class="button" href="mailto:stlacmchapter@example.com?subject=STL%20ACM%20Mailing%20List">Join Mailing List</a>
+    <a class="button" id="openSubscribeBtn" href="{% url 'subscribe' %}">Join Mailing List</a>
   </div>
 </section>
 
@@ -62,4 +62,115 @@
     {% endfor %}
   </div>
 </section>
+
+<div id="subscribeModal" class="event-modal" aria-hidden="true" role="dialog" aria-labelledby="subscribeModalTitle">
+  <div class="event-modal-backdrop" id="subscribeModalBackdrop"></div>
+  <div class="event-modal-card">
+    <button type="button" class="event-modal-close" id="subscribeModalClose" aria-label="Close mailing list signup">×</button>
+    <p class="event-modal-eyebrow">STL ACM Chapter</p>
+    <h2 id="subscribeModalTitle">Join the mailing list</h2>
+    <p class="subscribe-lede">Get occasional updates about upcoming events.</p>
+
+    <div id="subscribeModalStatus" class="subscribe-modal-status" aria-live="polite"></div>
+
+    <form id="subscribeModalForm" method="post" action="{% url 'subscribe' %}" class="subscribe-form" novalidate>
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="subscribeFirstName">First name</label>
+        <input id="subscribeFirstName" name="first_name" maxlength="80" autocomplete="given-name" required>
+      </div>
+
+      <div class="form-row">
+        <label for="subscribeLastName">Last name</label>
+        <input id="subscribeLastName" name="last_name" maxlength="80" autocomplete="family-name">
+      </div>
+
+      <div class="form-row">
+        <label for="subscribeEmail">Email</label>
+        <input id="subscribeEmail" name="email" type="email" maxlength="254" autocomplete="email" required>
+      </div>
+
+      <div class="form-row honeypot">
+        <label for="subscribeCompany">Company</label>
+        <input id="subscribeCompany" name="company" maxlength="200" autocomplete="off" tabindex="-1">
+      </div>
+
+      <div class="event-modal-actions">
+        <button type="submit" class="button primary">Subscribe</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const openBtn = document.getElementById('openSubscribeBtn');
+    const modal = document.getElementById('subscribeModal');
+    const backdrop = document.getElementById('subscribeModalBackdrop');
+    const closeBtn = document.getElementById('subscribeModalClose');
+    const form = document.getElementById('subscribeModalForm');
+    const status = document.getElementById('subscribeModalStatus');
+    const firstName = document.getElementById('subscribeFirstName');
+    const csrfToken = form.querySelector('input[name=csrfmiddlewaretoken]')?.value || '';
+
+    function openModal() {
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      status.textContent = '';
+      status.className = 'subscribe-modal-status';
+      window.setTimeout(() => firstName && firstName.focus(), 0);
+    }
+
+    function closeModal() {
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    openBtn.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+        closeModal();
+      }
+    });
+
+    function setStatus(message, kind) {
+      status.textContent = message;
+      status.className = `subscribe-modal-status ${kind || ''}`.trim();
+    }
+
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+      setStatus('Submitting…', 'is-busy');
+      const data = new FormData(form);
+
+      fetch(form.action + '?source=modal', {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrfToken
+        },
+        body: data
+      })
+        .then((resp) => resp.json())
+        .then((payload) => {
+          if (payload && payload.ok) {
+            form.reset();
+            setStatus("You're subscribed. Thanks!", 'is-success');
+            return;
+          }
+          const errorText = (payload && payload.error) ? payload.error : 'Please check the form and try again.';
+          setStatus(errorText, 'is-error');
+        })
+        .catch(() => {
+          setStatus('Something went wrong. Please try again.', 'is-error');
+        });
+    });
+  }());
+</script>
 {% endblock %}

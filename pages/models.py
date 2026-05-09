@@ -41,3 +41,19 @@ class ParticipatingMeetup(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MailingListSubscriber(models.Model):
+    first_name = models.CharField(max_length=80)
+    last_name = models.CharField(max_length=80, blank=True)
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    source = models.CharField(max_length=40, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=256, blank=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+    def __str__(self):
+        return self.email

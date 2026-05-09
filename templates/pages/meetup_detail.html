@@ -92,7 +92,8 @@
       const withLinks = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (_m, label, href) {
         return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
       });
-      return withLinks.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      const withBold = withLinks.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      return withBold.replace(/(^|[^*])\*([^*]+?)\*(?!\*)/g, '$1<em>$2</em>');
     }
 
     function formatEventDescription(raw) {
