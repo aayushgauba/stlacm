@@ -1,0 +1,86 @@
+    @font-face { font-family: "Figtree"; src: url("../fonts/Figtree-Variable.ttf") format("truetype"); font-style: normal; font-weight: 300 900; font-display: swap; }
+    @font-face { font-family: "Open Sans"; src: url("../fonts/OpenSans-Regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Open Sans"; src: url("../fonts/OpenSans-ExtraBold.ttf") format("truetype"); font-style: normal; font-weight: 800; font-display: swap; }
+
+    :root {
+      --ink: #142720;
+      --paper: #f7f5ef;
+      --white: #ffffff;
+      --green: #126b4f;
+      --lime: #c7ec6b;
+      --yellow: #f8cc4b;
+      --coral: #ef684f;
+      --line: #142720;
+      --content: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Open Sans", Arial, sans-serif; font-size: 1rem; line-height: 1.65; }
+    a { color: inherit; }
+    .skip-link { position: absolute; top: -4rem; left: 1rem; z-index: 20; background: var(--white); padding: .75rem 1rem; font-weight: 800; }
+    .skip-link:focus { top: 1rem; }
+
+    .site-nav { position: absolute; inset: 0 0 auto; z-index: 10; border-bottom: 1px solid rgba(255,255,255,.38); color: var(--white); }
+    .nav-inner { width: min(calc(100% - 3rem), var(--content)); min-height: 76px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+    .wordmark { font-family: "Figtree", sans-serif; font-size: 1.45rem; font-weight: 850; text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; margin: 0; padding: 0; list-style: none; font-family: "Figtree", sans-serif; font-weight: 700; }
+    .nav-links a { text-underline-offset: .3rem; text-decoration-thickness: 2px; }
+    .nav-links a:not(:hover):not(:focus-visible) { text-decoration-color: transparent; }
+
+    .hero { min-height: 86vh; display: flex; align-items: flex-end; background: linear-gradient(90deg,rgba(6,27,20,.88) 0%,rgba(6,27,20,.5) 55%,rgba(6,27,20,.15) 100%), url("../arch.jpg") center / cover no-repeat; color: var(--white); }
+    .hero-inner { width: min(calc(100% - 3rem), var(--content)); margin: 0 auto; padding: 10rem 0 5.5rem; }
+    .eyebrow { display: inline-flex; align-items: center; gap: .6rem; margin: 0 0 1.1rem; font-family: "Figtree", sans-serif; font-size: .9rem; font-weight: 800; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 2.5rem; height: .35rem; background: var(--lime); }
+    h1, h2, h3 { margin: 0; font-family: "Figtree", sans-serif; line-height: .96; }
+    h1 { max-width: 10ch; font-size: clamp(4rem, 11vw, 9.5rem); font-weight: 900; }
+    .hero-copy { max-width: 640px; margin: 1.5rem 0 0; font-size: clamp(1.1rem, 2vw, 1.45rem); }
+
+    .facts { background: var(--lime); border-bottom: 2px solid var(--line); }
+    .facts-inner { width: min(100%, var(--content)); margin: 0 auto; display: grid; grid-template-columns: repeat(3,1fr); }
+    .fact { min-height: 160px; padding: 2rem 2.5rem; display: flex; flex-direction: column; justify-content: center; border-left: 2px solid var(--line); }
+    .fact:last-child { border-right: 2px solid var(--line); }
+    .fact-label { font-family: "Figtree", sans-serif; font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+    .fact-value { margin-top: .35rem; font-family: "Figtree", sans-serif; font-size: clamp(1.45rem, 2.7vw, 2.25rem); font-weight: 850; line-height: 1.05; }
+
+    .intro { width: min(calc(100% - 3rem), var(--content)); margin: 0 auto; padding: 7rem 0; display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.35fr); gap: clamp(3rem,7vw,6rem); align-items: start; }
+    .intro > * { min-width: 0; }
+    .section-number { display: block; margin-bottom: 1.25rem; font-family: "Open Sans", sans-serif; font-size: .9rem; font-weight: 800; }
+    .intro h2 { max-width: 9ch; font-size: clamp(2.8rem,4.5vw,4.4rem); font-weight: 900; text-wrap: balance; }
+    .cfp h2 { font-size: clamp(2.8rem,6vw,5.5rem); font-weight: 900; text-wrap: balance; }
+    .intro-copy { margin: 0; max-width: 720px; font-family: "Figtree", sans-serif; font-size: clamp(1.45rem,3vw,2.3rem); font-weight: 600; line-height: 1.25; }
+    .photo-break { min-height: 42vh; background: url("../arch2.jpg") 50% 42% / cover no-repeat; border-block: 2px solid var(--line); }
+
+    .cfp { background: var(--green); color: var(--white); }
+    .cfp-inner { width: min(calc(100% - 3rem), var(--content)); margin: 0 auto; padding: 7rem 0; display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(3rem,8vw,8rem); }
+    .cfp-lead { margin: 1.75rem 0 0; max-width: 34rem; font-size: 1.2rem; }
+    .topics { margin: 0; padding: 0; border-top: 1px solid rgba(255,255,255,.45); list-style: none; }
+    .topics li { padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.45); font-family: "Figtree", sans-serif; font-size: clamp(1.1rem,2vw,1.45rem); font-weight: 650; }
+    .button { min-height: 52px; margin-top: 2rem; padding: .9rem 1.35rem; display: inline-flex; align-items: center; gap: 1.25rem; background: var(--yellow); border: 2px solid var(--ink); color: var(--ink); cursor: pointer; font-family: "Figtree", sans-serif; font-size: 1rem; font-weight: 850; text-decoration: none; box-shadow: 5px 5px 0 var(--ink); transition: transform 160ms ease, box-shadow 160ms ease; }
+    .button::after { content: "\2192"; font-size: 1.4rem; line-height: 1; }
+    .button:hover, .button:focus-visible { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--ink); }
+
+    footer { background: var(--coral); border-top: 2px solid var(--line); }
+    .footer-inner { width: min(calc(100% - 3rem), var(--content)); min-height: 210px; margin: 0 auto; padding: 3rem 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; }
+    .footer-name { font-family: "Figtree", sans-serif; font-size: clamp(2.3rem,5vw,4.5rem); font-weight: 900; line-height: 1; }
+    footer p { margin: 0; font-size: .9rem; font-weight: 800; }
+
+    @media (max-width: 760px) {
+      .nav-inner, .hero-inner, .intro, .cfp-inner, .footer-inner { width: min(calc(100% - 2rem), var(--content)); }
+      .nav-links li:first-child { display: none; }
+      .nav-links { gap: 1rem; font-size: .9rem; }
+      .hero { min-height: 76vh; background-position: 58% center; }
+      .hero-inner { padding-bottom: 3rem; }
+      h1 { font-size: clamp(3.7rem,20vw,6.5rem); }
+      .facts-inner { grid-template-columns: 1fr; }
+      .fact, .fact:last-child { min-height: 0; padding: 1.5rem 1rem; border-inline: 0; border-bottom: 2px solid var(--line); }
+      .fact:last-child { border-bottom: 0; }
+      .intro, .cfp-inner { grid-template-columns: 1fr; padding: 4.5rem 0; gap: 2.5rem; }
+      .photo-break { min-height: 32vh; }
+      .footer-inner { min-height: 180px; flex-direction: column; align-items: flex-start; justify-content: space-between; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .button { transition: none; }
+    }

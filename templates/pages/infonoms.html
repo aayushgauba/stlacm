@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ site.description|escape }}">
+  <title>{{ site.title|escape }} | {{ site.event.city|escape }}</title>
+  <link rel="stylesheet" href="{% static 'infonoms/css/infonoms.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="wordmark" href="#top">infonoms</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#speakers">Call for speakers</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <p class="eyebrow">A technology conference for curious minds</p>
+      <h1>{{ site.title }}</h1>
+      <p class="hero-copy">One day of practical ideas, generous conversations, and new connections in the heart of St. Louis.</p>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="facts" aria-label="Event details">
+      <div class="facts-inner">
+        <div class="fact"><span class="fact-label">When</span><span class="fact-value">{{ site.event.date }}</span></div>
+        <div class="fact"><span class="fact-label">Where</span><span class="fact-value">{{ site.event.location }}</span></div>
+        <div class="fact"><span class="fact-label">Format</span><span class="fact-value">{{ site.event.format }}</span></div>
+      </div>
+    </section>
+
+    <section class="intro" id="about">
+      <div><span class="section-number">01 / About</span><h2>Come build the conversation.</h2></div>
+      <p class="intro-copy">Infonoms brings together developers, researchers, makers, and technologists to share useful work and the ideas behind it. Expect a welcoming room, thoughtful talks, and plenty of time to meet the people doing the work.</p>
+    </section>
+
+    <div class="photo-break" role="img" aria-label="The Gateway Arch framed against a blue sky"></div>
+
+    <section class="cfp" id="speakers">
+      <div class="cfp-inner">
+        <div>
+          <span class="section-number">02 / Call for speakers</span>
+          <h2>Bring your idea to St. Louis.</h2>
+          <p class="cfp-lead">We are looking for clear, engaging talks from people at every stage of their career. Share a lesson learned, a problem solved, or a question worth exploring.</p>
+          {% if site.event.proposal_url %}
+            <a class="button" href="{{ site.event.proposal_url }}">Submit a proposal</a>
+          {% else %}
+            <p class="cfp-lead">Speaker proposals will open soon.</p>
+          {% endif %}
+        </div>
+        <div>
+          <p class="eyebrow">Topics we would love to hear about</p>
+          <ul class="topics">
+            <li>Data science &amp; machine learning</li>
+            <li>Software development &amp; testing</li>
+            <li>Systems &amp; embedded programming</li>
+            <li>Game development &amp; digital media</li>
+            <li>Cybersecurity, networks &amp; infosec</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner"><div class="footer-name">infonoms<br>2026</div><p>{{ site.event.date }} / {{ site.event.location }}</p></div>
+  </footer>
+</body>
+</html>

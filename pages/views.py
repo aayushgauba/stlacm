@@ -4,6 +4,7 @@ from datetime import datetime
 from urllib.error import URLError
 from urllib.request import urlopen
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.core.cache import cache
@@ -11,6 +12,24 @@ from .forms import MailingListSubscribeForm
 from .models import MailingListSubscriber, MeetupImage, ParticipatingMeetup
 
 EVENTS_API_URL = "https://stlcodecal.s3.us-east-2.amazonaws.com/events_latest.json"
+
+def infonoms(request):
+    event = {
+        'city': 'St. Louis',
+        'date': 'To be announced',
+        'location': 'St. Louis — venue to be announced',
+        'format': 'One-day conference',
+        'proposal_url': '',
+        **getattr(settings, 'INFONOMS_EVENT', {}),
+    }
+    return render(request, 'pages/infonoms.html', {
+        'site': {
+            'title': 'infonoms',
+            'description': 'A technology conference for curious minds in St. Louis.',
+            'event': event,
+        },
+    })
+
 
 def home(request):
     meetup_images = MeetupImage.objects.all()
