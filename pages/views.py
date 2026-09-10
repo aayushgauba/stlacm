@@ -16,16 +16,19 @@ EVENTS_API_URL = "https://stlcodecal.s3.us-east-2.amazonaws.com/events_latest.js
 def infonoms(request):
     event = {
         'city': 'St. Louis',
-        'date': 'To be announced',
-        'location': 'St. Louis — venue to be announced',
-        'format': 'One-day conference',
+        'date': 'Saturday, October 24',
+        'time': '10am–4:30pm',
+        'location': 'St. Louis County Library–Oak Bend Branch',
+        'location_url': 'https://www.slcl.org/hours-and-locations/oak-bend-branch',
+        'location_note': 'Near Perennial on the Trail',
+        'format': 'Local tech mini conference',
         'proposal_url': '',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
     return render(request, 'pages/infonoms.html', {
         'site': {
             'title': 'infonoms',
-            'description': 'A technology conference for curious minds in St. Louis.',
+            'description': 'Your local tech mini conference in St. Louis.',
             'event': event,
         },
     })

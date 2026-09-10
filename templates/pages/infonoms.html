@@ -22,9 +22,9 @@
 
   <header class="hero" id="top">
     <div class="hero-inner">
-      <p class="eyebrow">A technology conference for curious minds</p>
+      <p class="eyebrow">Your local tech mini conference</p>
       <h1>{{ site.title }}</h1>
-      <p class="hero-copy">One day of practical ideas, generous conversations, and new connections in the heart of St. Louis.</p>
+      <p class="hero-copy">One day of practical ideas, generous conversations, and new connections in St. Louis.</p>
     </div>
   </header>
 
@@ -32,8 +32,12 @@
     <section class="facts" aria-label="Event details">
       <div class="facts-inner">
         <div class="fact"><span class="fact-label">When</span><span class="fact-value">{{ site.event.date }}</span></div>
-        <div class="fact"><span class="fact-label">Where</span><span class="fact-value">{{ site.event.location }}</span></div>
-        <div class="fact"><span class="fact-label">Format</span><span class="fact-value">{{ site.event.format }}</span></div>
+        <div class="fact">
+          <span class="fact-label">Where</span>
+          <span class="fact-value">{% if site.event.location_url %}<a href="{{ site.event.location_url }}">{{ site.event.location }}</a>{% else %}{{ site.event.location }}{% endif %}</span>
+          {% if site.event.location_note %}<span class="fact-note">{{ site.event.location_note }}</span>{% endif %}
+        </div>
+        <div class="fact"><span class="fact-label">Time</span><span class="fact-value">{{ site.event.time }}</span></div>
       </div>
     </section>
 
@@ -48,7 +52,7 @@
       <div class="cfp-inner">
         <div>
           <span class="section-number">02 / Call for speakers</span>
-          <h2>Bring your idea to St. Louis.</h2>
+          <h2>Present at Infonoms.</h2>
           <p class="cfp-lead">We are looking for clear, engaging talks from people at every stage of their career. Share a lesson learned, a problem solved, or a question worth exploring.</p>
           {% if site.event.proposal_url %}
             <a class="button" href="{{ site.event.proposal_url }}">Submit a proposal</a>

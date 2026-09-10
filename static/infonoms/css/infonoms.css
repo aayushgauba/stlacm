@@ -42,6 +42,7 @@
     .fact:last-child { border-right: 2px solid var(--line); }
     .fact-label { font-family: "Figtree", sans-serif; font-size: .78rem; font-weight: 800; text-transform: uppercase; }
     .fact-value { margin-top: .35rem; font-family: "Figtree", sans-serif; font-size: clamp(1.45rem, 2.7vw, 2.25rem); font-weight: 850; line-height: 1.05; }
+    .fact-note { margin-top: .65rem; font-size: .9rem; }
 
     .intro { width: min(calc(100% - 3rem), var(--content)); margin: 0 auto; padding: 7rem 0; display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.35fr); gap: clamp(3rem,7vw,6rem); align-items: start; }
     .intro > * { min-width: 0; }
