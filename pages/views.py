@@ -22,7 +22,7 @@ def infonoms(request):
         'location_url': 'https://www.slcl.org/hours-and-locations/oak-bend-branch',
         'location_note': 'Near Perennial on the Trail',
         'format': 'Local tech mini conference',
-        'proposal_url': '',
+        'proposal_url': 'https://sessionize.com/infonoms',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
     return render(request, 'pages/infonoms.html', {
