@@ -23,6 +23,7 @@ def infonoms(request):
         'location_note': 'Near Perennial on the Trail',
         'format': 'Local tech mini conference',
         'proposal_url': 'https://sessionize.com/infonoms',
+        'rsvp_url': 'https://www.meetup.com/st-louis-computing-chapter/events/316447937',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
     return render(request, 'pages/infonoms.html', {

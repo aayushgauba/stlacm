@@ -26,6 +26,9 @@
       <h1>{{ site.title }}</h1>
       <p class="hero-copy">One day of practical ideas, generous conversations, and new connections in St. Louis.</p>
       <p class="hero-copy"><strong>Free and open to the public.</strong> Everyone is welcome.</p>
+      {% if site.event.rsvp_url %}
+        <a class="button" href="{{ site.event.rsvp_url }}" target="_blank" rel="noopener noreferrer">RSVP on Meetup</a>
+      {% endif %}
     </div>
   </header>
 
