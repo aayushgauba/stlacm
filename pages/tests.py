@@ -26,3 +26,20 @@ class StaticHomePageTests(TestCase):
             with self.subTest(route=route):
                 response = self.client.get(route)
                 self.assertEqual(response.status_code, 404)
+
+
+class InfonomsPageTests(TestCase):
+    def test_infonoms_page_includes_published_schedule(self):
+        response = self.client.get(reverse('infonoms'))
+        self.assertEqual(response.status_code, 200)
+        for content in [
+            'Saturday, October 24',
+            'Beyond RAG: Agent Playbooks',
+            'Akshay Danthi',
+            'Lunch',
+            'Using AI for Vulnerability Analysis',
+            'Noland Crane',
+            '4:00 PM',
+        ]:
+            with self.subTest(content=content):
+                self.assertContains(response, content)

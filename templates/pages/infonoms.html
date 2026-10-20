@@ -15,6 +15,7 @@
       <a class="wordmark" href="#top">infonoms</a>
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
+        <li><a href="#schedule">Schedule</a></li>
         <li><a href="#speakers">Call for speakers</a></li>
       </ul>
     </div>
@@ -50,12 +51,41 @@
       <p class="intro-copy">Infonoms brings together developers, researchers, makers, and technologists to share useful work and the ideas behind it. Expect a welcoming room, thoughtful talks, and plenty of time to meet the people doing the work.</p>
     </section>
 
+    <section class="schedule" id="schedule">
+      <div class="schedule-inner">
+        <div>
+          <span class="section-number">02 / Schedule</span>
+          <h2>A day of useful ideas.</h2>
+        </div>
+        <div class="schedule-list">
+          {% for block in schedule %}
+            <section class="schedule-block" aria-labelledby="schedule-{{ forloop.counter }}">
+              <div class="schedule-heading">
+                <h3 id="schedule-{{ forloop.counter }}">{{ block.label }}</h3>
+                <time>{{ block.time }}</time>
+              </div>
+              {% if block.items %}
+                <ul class="schedule-items">
+                  {% for item in block.items %}
+                    <li>
+                      <span>{{ item.title }}</span>
+                      <strong>{{ item.speaker }}</strong>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </section>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
     <div class="photo-break" role="img" aria-label="The Gateway Arch framed against a blue sky"></div>
 
     <section class="cfp" id="speakers">
       <div class="cfp-inner">
         <div>
-          <span class="section-number">02 / Call for speakers</span>
+          <span class="section-number">03 / Call for speakers</span>
           <h2>Present at Infonoms.</h2>
           <p class="cfp-lead">We are looking for clear, engaging talks from people at every stage of their career. Share a lesson learned, a problem solved, or a question worth exploring.</p>
           {% if site.event.proposal_url %}

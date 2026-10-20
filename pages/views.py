@@ -17,21 +17,55 @@ def infonoms(request):
     event = {
         'city': 'St. Louis',
         'date': 'Saturday, October 24',
-        'time': '10am–4:30pm',
-        'location': 'St. Louis County Library–Oak Bend Branch',
+        'time': '10:00am–4:00pm',
+        'location': 'Oak Bend Library',
         'location_url': 'https://www.slcl.org/hours-and-locations/oak-bend-branch',
-        'location_note': 'Near Perennial on the Trail',
+        'location_note': 'St. Louis County Library',
         'format': 'Local tech mini conference',
         'proposal_url': 'https://sessionize.com/infonoms',
         'rsvp_url': 'https://www.meetup.com/st-louis-computing-chapter/events/316447937',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
+    schedule = [
+        {
+            'label': 'Morning',
+            'time': '10:00 AM',
+            'items': [
+                {'title': 'Beyond RAG: Agent Playbooks', 'speaker': 'Akshay Danthi'},
+                {'title': 'Airflow for Geospatial Pipelines', 'speaker': 'Kevin Lai'},
+                {'title': 'Local AI Agents on Modest Hardware', 'speaker': 'Garry Capps'},
+                {'title': 'Zero to Cloud in 30 minutes', 'speaker': 'Kyle Cunningham'},
+            ],
+        },
+        {
+            'label': 'Lunch',
+            'time': '12:30 PM',
+            'items': [],
+        },
+        {
+            'label': 'Afternoon',
+            'time': '1:30 PM',
+            'items': [
+                {'title': 'Backpropagation & Human Cognition', 'speaker': 'Michael Crist'},
+                {'title': 'Promises, Observables, & Signals', 'speaker': 'Lance Finney'},
+                {'title': 'How LLMs Recall', 'speaker': 'Ayoub Ghriss'},
+                {'title': 'Rust Lifetimes in the Wild', 'speaker': 'Asha Somayajula'},
+                {'title': 'Using AI for Vulnerability Analysis', 'speaker': 'Noland Crane'},
+            ],
+        },
+        {
+            'label': 'Closing',
+            'time': '4:00 PM',
+            'items': [],
+        },
+    ]
     return render(request, 'pages/infonoms.html', {
         'site': {
             'title': 'infonoms',
             'description': 'Your local tech mini conference in St. Louis.',
             'event': event,
         },
+        'schedule': schedule,
     })
 
 
