@@ -59,8 +59,17 @@
     .schedule-heading h3 { font-size: clamp(1.5rem,3vw,2.25rem); font-weight: 850; text-transform: lowercase; }
     .schedule-heading time { font-family: "Figtree", sans-serif; font-size: clamp(1.25rem,2.3vw,1.75rem); font-weight: 800; white-space: nowrap; }
     .schedule-items { margin: 1rem 0 0; padding: 0; list-style: none; }
-    .schedule-items li { display: flex; justify-content: space-between; gap: 2rem; padding: .65rem 0; font-family: "Figtree", sans-serif; font-size: 1.15rem; line-height: 1.3; }
-    .schedule-items strong { font-style: italic; text-align: right; white-space: nowrap; }
+    .schedule-items li { padding: .65rem 0; border-bottom: 1px solid rgba(20,39,32,.2); font-family: "Figtree", sans-serif; font-size: 1.15rem; line-height: 1.3; }
+    .schedule-items li:last-child { border-bottom: 0; }
+    .talk summary { display: flex; justify-content: space-between; gap: 2rem; cursor: pointer; list-style: none; }
+    .talk summary::-webkit-details-marker { display: none; }
+    .talk summary::after { content: "+"; flex: 0 0 auto; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .talk[open] summary::after { content: "\2212"; }
+    .talk summary span { flex: 1; }
+    .talk summary strong { font-style: italic; text-align: right; white-space: nowrap; }
+    .talk-details { max-width: 52rem; padding: 1.25rem 2rem 0 0; font-family: "Open Sans", sans-serif; font-size: 1rem; line-height: 1.6; }
+    .talk-details h4 { margin: 0 0 .35rem; font-family: "Figtree", sans-serif; font-size: 1rem; font-weight: 800; text-transform: uppercase; }
+    .talk-details p { margin: 0 0 1rem; }
     .photo-break { min-height: 42vh; background: url("../arch2.jpg") 50% 42% / cover no-repeat; border-block: 2px solid var(--line); }
 
     .cfp { background: var(--green); color: var(--white); }
@@ -88,8 +97,10 @@
       .fact, .fact:last-child { min-height: 0; padding: 1.5rem 1rem; border-inline: 0; border-bottom: 2px solid var(--line); }
       .fact:last-child { border-bottom: 0; }
       .intro, .schedule-inner, .cfp-inner { grid-template-columns: 1fr; padding: 4.5rem 0; gap: 2.5rem; }
-      .schedule-items li { align-items: flex-start; flex-direction: column; gap: .2rem; }
-      .schedule-items strong { text-align: left; }
+      .talk summary { align-items: flex-start; flex-direction: column; gap: .2rem; padding-right: 2rem; position: relative; }
+      .talk summary::after { position: absolute; top: 0; right: 0; }
+      .talk summary strong { text-align: left; }
+      .talk-details { padding-right: 0; }
       .photo-break { min-height: 32vh; }
       .footer-inner { min-height: 180px; flex-direction: column; align-items: flex-start; justify-content: space-between; }
     }

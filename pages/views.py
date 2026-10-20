@@ -30,10 +30,30 @@ def infonoms(request):
             'label': 'Morning',
             'time': '10:00 AM',
             'items': [
-                {'title': 'Beyond RAG: Agent Playbooks', 'speaker': 'Akshay Danthi'},
-                {'title': 'Airflow for Geospatial Pipelines', 'speaker': 'Kevin Lai'},
-                {'title': 'Local AI Agents on Modest Hardware', 'speaker': 'Garry Capps'},
-                {'title': 'Zero to Cloud in 30 minutes', 'speaker': 'Kyle Cunningham'},
+                {
+                    'title': 'Beyond RAG: Designing AI Agent Playbooks for Complex Customer Support',
+                    'speaker': 'Akshay Danthi',
+                    'description': 'RAG can retrieve information and generate answers, but complex customer support cases often require understanding underlying problems, identifying resolution steps, and executing backend actions. This session explores multi-stage LLM analysis, actionable playbooks, agent evaluation, capability gaps, and balancing accuracy, cost, and scalability.',
+                    'bio': 'Akshay Danthi is a Technical Business Analyst specializing in Generative AI, AI agents, and intelligent automation. He focuses on turning complex business problems into practical AI solutions using RAG, LLM evaluation, and workflow automation.',
+                },
+                {
+                    'title': 'Airflow for Geospatial Pipelines',
+                    'speaker': 'Kevin Lai',
+                    'description': 'Geospatial processing workflows often involve computationally intensive tasks, diverse data sources, and different resource requirements. This talk explores Apache Airflow’s Kubernetes Executor, declarative dataset and processing manifests, metadata-driven workflows, and scalable Kubernetes execution.',
+                    'bio': 'Kevin Lai is a Geospatial Software Engineer at Xcellent Technology Solution, serving the United States Geological Survey as a contractor.',
+                },
+                {
+                    'title': 'Local AI Agents on Modest Hardware',
+                    'speaker': 'Garry Capps',
+                    'description': 'This talk explores local agentic AI, from full agent harnesses running capable 27-billion-parameter models to micro-agentic systems that accomplish useful work with remarkably little computing power. It covers practical hardware, model compression, inference runtimes, context management, privacy, cost, and what useful autonomous computing can do on modest machines.',
+                    'bio': 'Garry Capps is a veteran technologist with decades of experience in software development, systems architecture, and IT leadership. He currently works in R&D at Global Wafers as an AI Software Engineer specializing in LLM-based agentic implementations.',
+                },
+                {
+                    'title': 'Zero to Cloud in 30 minutes',
+                    'speaker': 'Kyle Cunningham',
+                    'description': '',
+                    'bio': '',
+                },
             ],
         },
         {
@@ -45,11 +65,36 @@ def infonoms(request):
             'label': 'Afternoon',
             'time': '1:30 PM',
             'items': [
-                {'title': 'Backpropagation & Human Cognition', 'speaker': 'Michael Crist'},
-                {'title': 'Promises, Observables, & Signals', 'speaker': 'Lance Finney'},
-                {'title': 'How LLMs Recall', 'speaker': 'Ayoub Ghriss'},
-                {'title': 'Rust Lifetimes in the Wild', 'speaker': 'Asha Somayajula'},
-                {'title': 'Using AI for Vulnerability Analysis', 'speaker': 'Noland Crane'},
+                {
+                    'title': 'Backpropagation Based Systems as a Model of Human Cognition',
+                    'speaker': 'Michael Crist',
+                    'description': 'This presentation reviews the question: to what extent can backpropagation-based systems act as a model of human cognition? It also considers how human cognition and neuroscience can inform challenges in today’s deep-learning agents.',
+                    'bio': 'Michael Crist is a Senior Systems Engineer for the Department of Defense and the lead engineer for his contracting company. He is completing a Master’s Degree in Computer Science from Georgia Tech.',
+                },
+                {
+                    'title': 'Comparing Promises, Observables, & Signals',
+                    'speaker': 'Lance Finney',
+                    'description': 'Promises, observables, and signals are three approaches to asynchronous and reactive programming. This session explains their differences, limitations, complementary roles, and when to choose each one in a modern JavaScript or TypeScript application.',
+                    'bio': 'After more than a decade in the Java desktop world, Lance has worked in Angular, JavaScript, and TypeScript since 2014. As an Angular Google Developer Expert, he develops Angular projects and mentors junior developers.',
+                },
+                {
+                    'title': 'How LLMs Recall',
+                    'speaker': 'Ayoub Ghriss',
+                    'description': 'This talk dives into the attention mechanism and how large language models use it to retrieve information.',
+                    'bio': 'Ayoub Ghriss is a postdoctoral researcher at the Multimodal Vision Research Laboratory at WashU. He recently completed a PhD from CU Boulder on representation learning and efficient machine learning.',
+                },
+                {
+                    'title': "Lifetimes in the Wild: How Reaper's Rust Editor Backend uses 'a without fear",
+                    'speaker': 'Asha Somayajula',
+                    'description': 'Using Reaper, an IDE with a Rust backend, this talk walks through lifetime patterns for lexers, parsers, symbol indexes, AST outlining, coverage slicing, and zero-copy agent and API request bodies. Attendees will leave with a practical checklist for when to borrow with a lifetime, use static data, or own a String.',
+                    'bio': 'Asha Somayajula is a Lead Engineer and Architect based in St. Louis. She builds platform and AI-native systems and open-source tools including kdash and Reaper, and has worked at CarNow, Mastercard, the Federal Reserve Bank, HPE/USPS, and Mercy Health.',
+                },
+                {
+                    'title': 'Using AI for Vulnerability Analysis',
+                    'speaker': 'Noland Crane',
+                    'description': 'Organizations may have thousands or millions of vulnerabilities identified by security tools. This talk explores how AI agents can improve the process of turning that security data into useful work for developers.',
+                    'bio': 'Noland is an AI Security Engineer at Bloomreach. He has previously worked on web application penetration testing at TechGuard and vulnerability management while interning at Daimler.',
+                },
             ],
         },
         {

@@ -34,13 +34,17 @@ class InfonomsPageTests(TestCase):
         self.assertEqual(response.status_code, 200)
         for content in [
             'Saturday, October 24',
-            'Beyond RAG: Agent Playbooks',
+            'Beyond RAG: Designing AI Agent Playbooks for Complex Customer Support',
             'Akshay Danthi',
             'Lunch',
             'Using AI for Vulnerability Analysis',
             'Noland Crane',
             '4:00 PM',
             'Call for proposals closed.',
+            'About the talk',
+            'About the speaker',
+            'multi-stage LLM analysis',
+            'Multimodal Vision Research Laboratory',
         ]:
             with self.subTest(content=content):
                 self.assertContains(response, content)

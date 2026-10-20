@@ -68,8 +68,28 @@
                 <ul class="schedule-items">
                   {% for item in block.items %}
                     <li>
-                      <span>{{ item.title }}</span>
-                      <strong>{{ item.speaker }}</strong>
+                      <details class="talk">
+                        <summary>
+                          <span>{{ item.title }}</span>
+                          <strong>{{ item.speaker }}</strong>
+                        </summary>
+                        {% if item.description or item.bio %}
+                          <div class="talk-details">
+                            {% if item.description %}
+                              <div>
+                                <h4>About the talk</h4>
+                                <p>{{ item.description }}</p>
+                              </div>
+                            {% endif %}
+                            {% if item.bio %}
+                              <div>
+                                <h4>About the speaker</h4>
+                                <p>{{ item.bio }}</p>
+                              </div>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+                      </details>
                     </li>
                   {% endfor %}
                 </ul>
