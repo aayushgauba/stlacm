@@ -40,6 +40,8 @@ class InfonomsPageTests(TestCase):
             'Using AI for Vulnerability Analysis',
             'Noland Crane',
             '4:00 PM',
+            'Call for proposals closed.',
         ]:
             with self.subTest(content=content):
                 self.assertContains(response, content)
+        self.assertNotContains(response, 'Submit a proposal')

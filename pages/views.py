@@ -22,7 +22,6 @@ def infonoms(request):
         'location_url': 'https://www.slcl.org/hours-and-locations/oak-bend-branch',
         'location_note': 'St. Louis County Library',
         'format': 'Local tech mini conference',
-        'proposal_url': 'https://sessionize.com/infonoms',
         'rsvp_url': 'https://www.meetup.com/st-louis-computing-chapter/events/316447937',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
