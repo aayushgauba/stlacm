@@ -36,6 +36,8 @@ class InfonomsPageTests(TestCase):
             'Saturday, October 24',
             'Beyond RAG: Designing AI Agent Playbooks for Complex Customer Support',
             'Akshay Danthi',
+            'From Zero to Cloud in 30 Minutes',
+            'Founder and CEO of Community Cloud',
             'Lunch',
             'Using AI for Vulnerability Analysis',
             'Noland Crane',

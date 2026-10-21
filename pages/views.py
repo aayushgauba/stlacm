@@ -22,7 +22,7 @@ def infonoms(request):
         'location_url': 'https://www.slcl.org/hours-and-locations/oak-bend-branch',
         'location_note': 'St. Louis County Library',
         'format': 'Local tech mini conference',
-        'rsvp_url': 'https://www.meetup.com/st-louis-computing-chapter/events/316447937',
+        'rsvp_url': 'https://tally.so/r/RWK7eQ',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
     schedule = [
@@ -49,10 +49,10 @@ def infonoms(request):
                     'bio': 'Garry Capps is a veteran technologist with decades of experience in software development, systems architecture, and IT leadership. He currently works in R&D at Global Wafers as an AI Software Engineer specializing in LLM-based agentic implementations.',
                 },
                 {
-                    'title': 'Zero to Cloud in 30 minutes',
+                    'title': 'From Zero to Cloud in 30 Minutes',
                     'speaker': 'Kyle Cunningham',
-                    'description': '',
-                    'bio': '',
+                    'description': 'Kubernetes has become a technology that has become almost universally used in hyperscale computing. What about small deployments or ones at the edge? Community Cloud answers that by making edge and distributed Kubernetes a breeze to install and run. We’ll be showing off Community Cloud and getting in depth with the nitty gritty of Kubernetes.',
+                    'bio': 'Kyle is the Founder and CEO of Community Cloud, where he’s helping bring the newest innovations in infrastructure to everyone possible. Prior to founding Community Cloud Kyle was the Tech Lead for Business Intelligence at Grafana Labs. With a career in technology spanning over 20 years Kyle has worked on projects both large and small and created software used by millions of people throughout the world.',
                 },
             ],
         },
