@@ -78,6 +78,14 @@
     .topics { margin: 0; padding: 0; border-top: 1px solid rgba(255,255,255,.45); list-style: none; }
     .topics li { padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.45); font-family: "Figtree", sans-serif; font-size: clamp(1.1rem,2vw,1.45rem); font-weight: 650; }
     .button { min-height: 52px; margin-top: 2rem; padding: .9rem 1.35rem; display: inline-flex; align-items: center; gap: 1.25rem; background: var(--yellow); border: 2px solid var(--ink); color: var(--ink); cursor: pointer; font-family: "Figtree", sans-serif; font-size: 1rem; font-weight: 850; text-decoration: none; box-shadow: 5px 5px 0 var(--ink); transition: transform 160ms ease, box-shadow 160ms ease; }
+    .rsvp-menu { position: relative; display: inline-block; margin-top: 2rem; }
+    .rsvp-menu summary { margin-top: 0; }
+    .rsvp-menu summary::-webkit-details-marker { display: none; }
+    .rsvp-menu summary::after { content: "\2304"; font-size: 1.35rem; }
+    .rsvp-menu[open] summary::after { content: "\2303"; }
+    .rsvp-options { position: absolute; z-index: 2; min-width: 100%; padding: .35rem; background: var(--white); border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); color: var(--ink); }
+    .rsvp-options a { display: block; padding: .6rem .8rem; font-family: "Figtree", sans-serif; font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .rsvp-options a:hover, .rsvp-options a:focus-visible { background: var(--lime); }
     .button::after { content: "\2192"; font-size: 1.4rem; line-height: 1; }
     .button:hover, .button:focus-visible { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--ink); }
 

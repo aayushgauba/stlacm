@@ -23,6 +23,7 @@ def infonoms(request):
         'location_note': 'St. Louis County Library',
         'format': 'Local tech mini conference',
         'rsvp_url': 'https://tally.so/r/RWK7eQ',
+        'meetup_url': 'https://www.meetup.com/st-louis-computing-chapter/events/316447937',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
     schedule = [

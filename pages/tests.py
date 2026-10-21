@@ -47,6 +47,9 @@ class InfonomsPageTests(TestCase):
             'About the speaker',
             'multi-stage LLM analysis',
             'Multimodal Vision Research Laboratory',
+            'RSVP',
+            '>Tally<',
+            '>Meetup<',
         ]:
             with self.subTest(content=content):
                 self.assertContains(response, content)

@@ -28,7 +28,15 @@
       <p class="hero-copy">One day of practical ideas, generous conversations, and new connections in St. Louis.</p>
       <p class="hero-copy"><strong>Free and open to the public.</strong> Everyone is welcome.</p>
       {% if site.event.rsvp_url %}
-        <a class="button" href="{{ site.event.rsvp_url }}" target="_blank" rel="noopener noreferrer">RSVP</a>
+        <details class="rsvp-menu">
+          <summary class="button">RSVP</summary>
+          <div class="rsvp-options" aria-label="RSVP options">
+            <a href="{{ site.event.rsvp_url }}" target="_blank" rel="noopener noreferrer">Tally</a>
+            {% if site.event.meetup_url %}
+              <a href="{{ site.event.meetup_url }}" target="_blank" rel="noopener noreferrer">Meetup</a>
+            {% endif %}
+          </div>
+        </details>
       {% endif %}
     </div>
   </header>
