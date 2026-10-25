@@ -4,65 +4,82 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{{ site.description|escape }}">
-  <title>{{ site.title|escape }} | {{ site.event.city|escape }}</title>
+  <meta name="description" content="{% block description %}{{ site.description|escape }}{% endblock %}">
+  <title>{% block title %}{{ site.title|escape }} | {{ site.event.city|escape }}{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'infonoms/css/infonoms.css' %}">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <nav class="site-nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a class="wordmark" href="#top">infonoms</a>
+      <a class="wordmark" href="{% url 'infonoms' %}">infonoms</a>
       <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#schedule">Schedule</a></li>
-        <li><a href="#speakers">Call for speakers</a></li>
+        <li><a href="{% url 'infonoms' %}">Home</a></li>
+        <li><a href="{% url 'infonoms' %}#about">About</a></li>
+        <li><a href="{% url 'infonoms' %}#schedule">Schedule</a></li>
+        <li><a href="{% url 'infonoms' %}#venue">Venue</a></li>
+        <li><a href="{% url 'infonoms' %}#recordings">Talk recordings</a></li>
       </ul>
     </div>
   </nav>
 
-  <header class="hero" id="top">
+  {% block header %}<header class="hero" id="top">
     <div class="hero-inner">
-      <p class="eyebrow">Your local tech mini conference</p>
+      <p class="eyebrow">{{ site.event.date }}, 2026 · {{ site.event.city }}</p>
       <h1>{{ site.title }}</h1>
-      <p class="hero-copy">One day of practical ideas, generous conversations, and new connections in St. Louis.</p>
-      <p class="hero-copy"><strong>Free and open to the public.</strong> Everyone is welcome.</p>
-      {% if site.event.rsvp_url %}
-        <details class="rsvp-menu">
-          <summary class="button">RSVP</summary>
-          <div class="rsvp-options" aria-label="RSVP options">
-            <a href="{{ site.event.rsvp_url }}" target="_blank" rel="noopener noreferrer">Tally</a>
-            {% if site.event.meetup_url %}
-              <a href="{{ site.event.meetup_url }}" target="_blank" rel="noopener noreferrer">Meetup</a>
-            {% endif %}
-          </div>
-        </details>
-      {% endif %}
+      <p class="hero-copy">A day of practical ideas, generous conversations, and new connections in St. Louis. Thanks for being part of Infonoms 2026.</p>
+      <div class="hero-actions">
+        <a class="button" href="{{ site.event.recordings_url }}" target="_blank" rel="noopener noreferrer">Watch the talks</a>
+        <a class="button button-secondary" href="#schedule">Talk schedule</a>
+      </div>
     </div>
-  </header>
+  </header>{% endblock %}
 
   <main id="main">
-    <section class="facts" aria-label="Event details">
+    {% block content %}
+    <section class="facts" aria-label="Conference at a glance">
       <div class="facts-inner">
-        <div class="fact"><span class="fact-label">When</span><span class="fact-value">{{ site.event.date }}</span></div>
-        <div class="fact">
-          <span class="fact-label">Where</span>
-          <span class="fact-value">{% if site.event.location_url %}<a href="{{ site.event.location_url }}">{{ site.event.location }}</a>{% else %}{{ site.event.location }}{% endif %}</span>
-          {% if site.event.location_note %}<span class="fact-note">{{ site.event.location_note }}</span>{% endif %}
-        </div>
-        <div class="fact"><span class="fact-label">Time</span><span class="fact-value">{{ site.event.time }}</span></div>
+        <div class="fact"><span class="fact-value">{{ talks|length }} talks</span><span class="fact-label">Ideas from our local tech community</span></div>
+        <div class="fact"><span class="fact-value">1 day</span><span class="fact-label">{{ site.event.date }}, 2026</span></div>
+        <div class="fact"><span class="fact-value">Free &amp; open</span><span class="fact-label">Everyone is welcome</span></div>
       </div>
     </section>
 
     <section class="intro" id="about">
-      <div><span class="section-number">01 / About</span><h2>Come build the conversation.</h2></div>
-      <p class="intro-copy">Infonoms brings together developers, researchers, makers, and technologists to share useful work and the ideas behind it. Expect a welcoming room, thoughtful talks, and plenty of time to meet the people doing the work.</p>
+      <div><img class="community-photo" src="{% static 'infonoms/arch2.jpg' %}" alt="The Gateway Arch in St. Louis" width="800" height="600" loading="lazy"></div>
+      <div><span class="section-number">About Infonoms</span><h2>For curious technologists of all levels.</h2><p class="intro-copy">Infonoms brings together developers, researchers, makers, and technologists to share useful work and the ideas behind it. Whether you build software every day or tinker in your spare time, there is a place for you here.</p><a class="text-link" href="#schedule">Explore the programme →</a></div>
+    </section>
+
+    <section class="programme" aria-label="Programme overview">
+      {% for block in schedule %}
+        <a href="#schedule"><span>{{ block.time }}</span><strong>{{ block.label }}</strong><span>{% if block.items %}{{ block.items|length }} talks from local technologists{% elif block.label == 'Lunch' %}Take a break and connect{% else %}Wrap up the day{% endif %}</span></a>
+      {% endfor %}
+    </section>
+
+    <section class="recordings" id="recordings" aria-labelledby="recordings-title">
+      <div class="recordings-inner">
+        <div class="section-heading"><div><span class="section-number">Keep the ideas going</span><h2 id="recordings-title">Talk recordings</h2></div><a class="text-link" href="{{ site.event.recordings_url }}" target="_blank" rel="noopener noreferrer">Watch the playlist on YouTube →</a></div>
+        <p class="recordings-lead">Revisit a favourite session or catch something you missed. Explore the Infonoms 2026 recordings on YouTube.</p>
+        <div class="recording-grid">
+          {% for talk in talks %}
+            <article class="recording-card">
+              <span class="recording-number">Infonoms 2026 / {{ forloop.counter|stringformat:"02d" }}</span>
+              <h3>{{ talk.title }}</h3>
+              <p>{{ talk.speaker }}</p>
+              {% if talk.video_id %}
+                <a class="recording-watch" href="https://www.youtube.com/watch?v={{ talk.video_id }}" target="_blank" rel="noopener noreferrer">Watch recording <span aria-hidden="true">↗</span></a>
+              {% endif %}
+              <a href="{% url 'infonoms-speaker' talk.speaker_slug %}">About this talk <span aria-hidden="true">→</span></a>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
     </section>
 
     <section class="schedule" id="schedule">
       <div class="schedule-inner">
         <div>
-          <span class="section-number">02 / Schedule</span>
+          <span class="section-number">The programme</span>
           <h2>A day of useful ideas.</h2>
         </div>
         <div class="schedule-list">
@@ -76,28 +93,10 @@
                 <ul class="schedule-items">
                   {% for item in block.items %}
                     <li>
-                      <details class="talk">
-                        <summary>
-                          <span>{{ item.title }}</span>
-                          <strong>{{ item.speaker }}</strong>
-                        </summary>
-                        {% if item.description or item.bio %}
-                          <div class="talk-details">
-                            {% if item.description %}
-                              <div>
-                                <h4>About the talk</h4>
-                                <p>{{ item.description }}</p>
-                              </div>
-                            {% endif %}
-                            {% if item.bio %}
-                              <div>
-                                <h4>About the speaker</h4>
-                                <p>{{ item.bio }}</p>
-                              </div>
-                            {% endif %}
-                          </div>
-                        {% endif %}
-                      </details>
+                      <article class="schedule-talk" id="{{ item.anchor }}">
+                        <h4><a href="{% url 'infonoms-speaker' item.speaker_slug %}">{{ item.title }}</a></h4>
+                        <p>Presented by <a href="{% url 'infonoms-speaker' item.speaker_slug %}">{{ item.speaker }}</a></p>
+                      </article>
                     </li>
                   {% endfor %}
                 </ul>
@@ -108,17 +107,17 @@
       </div>
     </section>
 
-    <div class="photo-break" role="img" aria-label="The Gateway Arch framed against a blue sky"></div>
-
-    <section class="cfp" id="speakers">
+    <section class="cfp" id="venue">
       <div class="cfp-inner">
         <div>
-          <span class="section-number">03 / Call for speakers</span>
-          <h2>Call for proposals closed.</h2>
-          <p class="cfp-lead">Thanks to everyone who submitted a talk. The schedule is now set for Infonoms 2026.</p>
+          <span class="section-number">Our St. Louis home</span>
+          <h2>{{ site.event.location }}</h2>
+          {% if site.event.location_note %}<p class="cfp-lead">{{ site.event.location_note }}</p>{% endif %}
+          {% if site.event.location_url %}<a class="button" href="{{ site.event.location_url }}">About the venue</a>{% endif %}
         </div>
         <div>
-          <p class="eyebrow">Topics we would love to hear about</p>
+          <p class="eyebrow">{{ site.event.date }}, 2026 / {{ site.event.time }}</p>
+          <p>A free community conference covering the ideas, tools, and systems we build together.</p>
           <ul class="topics">
             <li>Data science &amp; machine learning</li>
             <li>Software development &amp; testing</li>
@@ -129,10 +128,11 @@
         </div>
       </div>
     </section>
+    {% endblock %}
   </main>
 
   <footer>
-    <div class="footer-inner"><div class="footer-name">infonoms<br>2026</div><p>{{ site.event.date }} / {{ site.event.location }}</p></div>
+    <div class="footer-inner"><div class="footer-name">infonoms<br>2026</div><div><a class="text-link" href="{{ site.event.recordings_url }}" target="_blank" rel="noopener noreferrer">Watch the talks →</a><p>{{ site.event.date }} / {{ site.event.location }}</p><p><a href="{% url 'home' %}">STL ACM Chapter</a></p></div></div>
   </footer>
 </body>
 </html>

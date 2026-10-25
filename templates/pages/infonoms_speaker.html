@@ -1,0 +1,40 @@
+{% extends 'pages/infonoms.html' %}
+
+{% block title %}{{ talk.speaker }} — {{ talk.title }} | Infonoms 2026{% endblock %}
+{% block description %}{{ talk.description }}{% endblock %}
+
+{% block header %}
+  <header class="speaker-hero" id="top">
+    <div class="speaker-container">
+      <a class="text-link" href="{% url 'infonoms' %}#{{ talk.anchor }}">← Back to schedule</a>
+      <p class="eyebrow">Infonoms 2026 / Speaker</p>
+      <h1>{{ talk.speaker }}</h1>
+      <p class="speaker-session">{{ site.event.date }}, 2026 · {{ talk.session }} session · {{ site.event.location }}</p>
+    </div>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <div class="speaker-container speaker-content">
+    <article class="speaker-talk" aria-labelledby="talk-title">
+      <span class="section-number">The talk</span>
+      <h2 id="talk-title">{{ talk.title }}</h2>
+      <h3>About the talk</h3>
+      <p>{{ talk.description }}</p>
+      {% if talk.video_id %}
+        <section class="talk-recording" aria-labelledby="recording-title">
+          <h3 id="recording-title">Watch the recording</h3>
+          <iframe class="recording-player" src="https://www.youtube-nocookie.com/embed/{{ talk.video_id }}" title="{{ talk.title }} — {{ talk.speaker }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <a class="text-link" href="https://www.youtube.com/watch?v={{ talk.video_id }}" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
+        </section>
+      {% endif %}
+      <a class="button" href="{{ site.event.recordings_url }}" target="_blank" rel="noopener noreferrer">Browse talk recordings</a>
+    </article>
+    <aside class="speaker-bio" aria-labelledby="speaker-title">
+      <span class="section-number">Presented by</span>
+      <h2 id="speaker-title">{{ talk.speaker }}</h2>
+      <h3>About the speaker</h3>
+      <p>{{ talk.bio }}</p>
+    </aside>
+  </div>
+{% endblock %}

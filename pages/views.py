@@ -5,15 +5,16 @@ from urllib.error import URLError
 from urllib.request import urlopen
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.core.cache import cache
+from django.utils.text import slugify
 from .forms import MailingListSubscribeForm
 from .models import MailingListSubscriber, MeetupImage, ParticipatingMeetup
 
 EVENTS_API_URL = "https://stlcodecal.s3.us-east-2.amazonaws.com/events_latest.json"
 
-def infonoms(request):
+def _get_infonoms_context():
     event = {
         'city': 'St. Louis',
         'date': 'Saturday, October 24',
@@ -24,6 +25,7 @@ def infonoms(request):
         'format': 'Local tech mini conference',
         'rsvp_url': 'https://tally.so/r/RWK7eQ',
         'meetup_url': 'https://www.meetup.com/st-louis-computing-chapter/events/316447937',
+        'recordings_url': 'https://www.youtube.com/playlist?list=PLSNwhIDdWD8A',
         **getattr(settings, 'INFONOMS_EVENT', {}),
     }
     schedule = [
@@ -34,24 +36,28 @@ def infonoms(request):
                 {
                     'title': 'Beyond RAG: Designing AI Agent Playbooks for Complex Customer Support',
                     'speaker': 'Akshay Danthi',
+                    'video_id': 'm9HJkFvHeRk',
                     'description': 'RAG can retrieve information and generate answers, but complex customer support cases often require understanding underlying problems, identifying resolution steps, and executing backend actions. This session explores multi-stage LLM analysis, actionable playbooks, agent evaluation, capability gaps, and balancing accuracy, cost, and scalability.',
                     'bio': 'Akshay Danthi is a Technical Business Analyst specializing in Generative AI, AI agents, and intelligent automation. He focuses on turning complex business problems into practical AI solutions using RAG, LLM evaluation, and workflow automation.',
                 },
                 {
                     'title': 'Airflow for Geospatial Pipelines',
                     'speaker': 'Kevin Lai',
+                    'video_id': 'dPiNDNU-pgE',
                     'description': 'Geospatial processing workflows often involve computationally intensive tasks, diverse data sources, and different resource requirements. This talk explores Apache Airflow’s Kubernetes Executor, declarative dataset and processing manifests, metadata-driven workflows, and scalable Kubernetes execution.',
                     'bio': 'Kevin Lai is a Geospatial Software Engineer at Xcellent Technology Solution, serving the United States Geological Survey as a contractor.',
                 },
                 {
                     'title': 'Local AI Agents on Modest Hardware',
                     'speaker': 'Garry Capps',
+                    'video_id': 'HWkTTRiBxMI',
                     'description': 'This talk explores local agentic AI, from full agent harnesses running capable 27-billion-parameter models to micro-agentic systems that accomplish useful work with remarkably little computing power. It covers practical hardware, model compression, inference runtimes, context management, privacy, cost, and what useful autonomous computing can do on modest machines.',
                     'bio': 'Garry Capps is a veteran technologist with decades of experience in software development, systems architecture, and IT leadership. He currently works in R&D at Global Wafers as an AI Software Engineer specializing in LLM-based agentic implementations.',
                 },
                 {
                     'title': 'From Zero to Cloud in 30 Minutes',
                     'speaker': 'Kyle Cunningham',
+                    'video_id': 'jIwXX50PPRc',
                     'description': 'Kubernetes has become a technology that has become almost universally used in hyperscale computing. What about small deployments or ones at the edge? Community Cloud answers that by making edge and distributed Kubernetes a breeze to install and run. We’ll be showing off Community Cloud and getting in depth with the nitty gritty of Kubernetes.',
                     'bio': 'Kyle is the Founder and CEO of Community Cloud, where he’s helping bring the newest innovations in infrastructure to everyone possible. Prior to founding Community Cloud Kyle was the Tech Lead for Business Intelligence at Grafana Labs. With a career in technology spanning over 20 years Kyle has worked on projects both large and small and created software used by millions of people throughout the world.',
                 },
@@ -69,32 +75,30 @@ def infonoms(request):
                 {
                     'title': 'Backpropagation Based Systems as a Model of Human Cognition',
                     'speaker': 'Michael Crist',
+                    'video_id': 'vj43wVmKDo4',
                     'description': 'This presentation reviews the question: to what extent can backpropagation-based systems act as a model of human cognition? It also considers how human cognition and neuroscience can inform challenges in today’s deep-learning agents.',
                     'bio': 'Michael Crist is a Senior Systems Engineer for the Department of Defense and the lead engineer for his contracting company. He is completing a Master’s Degree in Computer Science from Georgia Tech.',
                 },
                 {
                     'title': 'Comparing Promises, Observables, & Signals',
                     'speaker': 'Lance Finney',
+                    'video_id': 'wEsmayYvsAY',
                     'description': 'Promises, observables, and signals are three approaches to asynchronous and reactive programming. This session explains their differences, limitations, complementary roles, and when to choose each one in a modern JavaScript or TypeScript application.',
                     'bio': 'After more than a decade in the Java desktop world, Lance has worked in Angular, JavaScript, and TypeScript since 2014. As an Angular Google Developer Expert, he develops Angular projects and mentors junior developers.',
                 },
                 {
                     'title': 'How LLMs Recall',
                     'speaker': 'Ayoub Ghriss',
+                    'video_id': 'Y3qlj4vTNxg',
                     'description': 'This talk dives into the attention mechanism and how large language models use it to retrieve information.',
                     'bio': 'Ayoub Ghriss is a postdoctoral researcher at the Multimodal Vision Research Laboratory at WashU. He recently completed a PhD from CU Boulder on representation learning and efficient machine learning.',
                 },
                 {
                     'title': "Lifetimes in the Wild: How Reaper's Rust Editor Backend uses 'a without fear",
                     'speaker': 'Asha Somayajula',
+                    'video_id': 'lv8R8Ym14pU',
                     'description': 'Using Reaper, an IDE with a Rust backend, this talk walks through lifetime patterns for lexers, parsers, symbol indexes, AST outlining, coverage slicing, and zero-copy agent and API request bodies. Attendees will leave with a practical checklist for when to borrow with a lifetime, use static data, or own a String.',
                     'bio': 'Asha Somayajula is a Lead Engineer and Architect based in St. Louis. She builds platform and AI-native systems and open-source tools including kdash and Reaper, and has worked at CarNow, Mastercard, the Federal Reserve Bank, HPE/USPS, and Mercy Health.',
-                },
-                {
-                    'title': 'Using AI for Vulnerability Analysis',
-                    'speaker': 'Noland Crane',
-                    'description': 'Organizations may have thousands or millions of vulnerabilities identified by security tools. This talk explores how AI agents can improve the process of turning that security data into useful work for developers.',
-                    'bio': 'Noland is an AI Security Engineer at Bloomreach. He has previously worked on web application penetration testing at TechGuard and vulnerability management while interning at Daimler.',
                 },
             ],
         },
@@ -104,14 +108,35 @@ def infonoms(request):
             'items': [],
         },
     ]
-    return render(request, 'pages/infonoms.html', {
+    talks = [talk for block in schedule for talk in block['items']]
+    for index, talk in enumerate(talks, start=1):
+        talk['anchor'] = f'talk-{index}'
+        talk['speaker_slug'] = slugify(talk['speaker'])
+    for block in schedule:
+        for talk in block['items']:
+            talk['session'] = block['label']
+    return {
         'site': {
             'title': 'infonoms',
             'description': 'Your local tech mini conference in St. Louis.',
             'event': event,
         },
         'schedule': schedule,
-    })
+        'talks': talks,
+    }
+
+
+def infonoms(request):
+    return render(request, 'pages/infonoms.html', _get_infonoms_context())
+
+
+def infonoms_speaker(request, slug):
+    context = _get_infonoms_context()
+    talk = next((talk for talk in context['talks'] if talk['speaker_slug'] == slug), None)
+    if talk is None:
+        raise Http404('Speaker not found')
+    context['talk'] = talk
+    return render(request, 'pages/infonoms_speaker.html', context)
 
 
 def home(request):
