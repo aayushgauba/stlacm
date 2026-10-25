@@ -5,12 +5,14 @@ from urllib.error import URLError
 from urllib.request import urlopen
 
 from django.conf import settings
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, render
 from django.core.cache import cache
 from django.utils.text import slugify
 from .forms import MailingListSubscribeForm
 from .models import MailingListSubscriber, MeetupImage, ParticipatingMeetup
+from .seo import infonoms_metadata, public_url
 
 EVENTS_API_URL = "https://stlcodecal.s3.us-east-2.amazonaws.com/events_latest.json"
 
@@ -127,7 +129,9 @@ def _get_infonoms_context():
 
 
 def infonoms(request):
-    return render(request, 'pages/infonoms.html', _get_infonoms_context())
+    context = _get_infonoms_context()
+    context.update(infonoms_metadata(context))
+    return render(request, 'pages/infonoms.html', context)
 
 
 def infonoms_speaker(request, slug):
@@ -136,7 +140,23 @@ def infonoms_speaker(request, slug):
     if talk is None:
         raise Http404('Speaker not found')
     context['talk'] = talk
+    context.update(infonoms_metadata(context, talk))
     return render(request, 'pages/infonoms_speaker.html', context)
+
+
+def sitemap(request):
+    paths = [reverse(name) for name in ('home', 'infonoms', 'calendar', 'subscribe')]
+    paths.extend(reverse('infonoms-speaker', args=[talk['speaker_slug']])
+                 for talk in _get_infonoms_context()['talks'])
+    paths.extend(reverse('meetup-detail', args=[meetup_id])
+                 for meetup_id in ParticipatingMeetup.objects.filter(is_active=True).values_list('id', flat=True))
+    return render(request, 'pages/sitemap.xml', {'urls': [public_url(path) for path in paths]},
+                  content_type='application/xml')
+
+
+def robots(request):
+    content = f"User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: {public_url(reverse('sitemap'))}\n"
+    return HttpResponse(content, content_type='text/plain')
 
 
 def home(request):

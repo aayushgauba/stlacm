@@ -3,6 +3,8 @@ from django.urls import resolve, reverse
 from django.utils.html import escape
 
 from . import views
+from .models import ParticipatingMeetup
+from .seo import structured_json
 
 
 class StaticHomePageTests(TestCase):
@@ -17,7 +19,7 @@ class StaticHomePageTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertContains(response, 'STL ACM Chapter')
         self.assertContains(response, '<meta name="description"', html=False)
-        self.assertContains(response, '<link rel="canonical" href="http://testserver', html=False)
+        self.assertContains(response, '<link rel="canonical" href="https://stl.acm.org/">', html=False)
         self.assertContains(response, '<meta property="og:title"', html=False)
         self.assertContains(response, '<meta property="og:description"', html=False)
         self.assertContains(response, '<meta name="twitter:card" content="summary">', html=False)
@@ -107,3 +109,67 @@ class InfonomsPageTests(TestCase):
     def test_recordings_link_can_be_configured(self):
         response = self.client.get(reverse('infonoms'))
         self.assertContains(response, 'href="https://example.com/recordings"', count=3)
+import json
+import re
+from xml.etree import ElementTree
+
+
+
+@override_settings(SITE_URL='https://stl.acm.org')
+class SeoTests(TestCase):
+    def test_canonical_urls_strip_tracking_parameters(self):
+        for path in ['/', '/infonoms/', '/infonoms/speakers/asha-somayajula/']:
+            with self.subTest(path=path):
+                response = self.client.get(path, {'utm_source': 'shared'})
+                self.assertContains(response, f'<link rel="canonical" href="https://stl.acm.org{path}">', count=1)
+                self.assertContains(response, f'<meta property="og:url" content="https://stl.acm.org{path}">')
+                self.assertNotContains(response, 'utm_source')
+
+    def test_infonoms_pages_have_unique_metadata_and_valid_structured_data(self):
+        paths = [reverse('infonoms')] + [
+            reverse('infonoms-speaker', args=[talk['speaker_slug']])
+            for talk in views._get_infonoms_context()['talks']
+        ]
+        titles = set()
+        for path in paths:
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                html = response.content.decode()
+                title = re.search(r'<title>(.*?)</title>', html).group(1)
+                self.assertNotIn(title, titles)
+                titles.add(title)
+                self.assertContains(response, f'<meta property="og:title" content="{title}">')
+                self.assertContains(response, '<meta name="twitter:card" content="summary_large_image">')
+                self.assertContains(response, 'content="https://stl.acm.org/static/infonoms/arch.jpg"')
+                schema = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', html).group(1))
+                self.assertEqual(schema['@context'], 'https://schema.org')
+                self.assertEqual(schema['@graph'][0]['url'], f'https://stl.acm.org{path}')
+                if 'speakers' in path:
+                    talk = response.context['talk']
+                    session = schema['@graph'][0]['mainEntity']
+                    self.assertEqual(session['creator']['name'], talk['speaker'])
+                    self.assertTrue(session['associatedMedia']['embedUrl'].endswith(talk['video_id']))
+                else:
+                    self.assertEqual(len(schema['@graph'][0]['mainEntity']['itemListElement']), 8)
+
+    def test_sitemap_lists_public_pages_and_active_meetups(self):
+        active = ParticipatingMeetup.objects.create(name='Active', description='Community')
+        inactive = ParticipatingMeetup.objects.create(name='Inactive', description='Community', is_active=False)
+        response = self.client.get(reverse('sitemap'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/xml')
+        root = ElementTree.fromstring(response.content)
+        urls = [element.text for element in root.findall('{*}url/{*}loc')]
+        for talk in views._get_infonoms_context()['talks']:
+            self.assertIn('https://stl.acm.org' + reverse('infonoms-speaker', args=[talk['speaker_slug']]), urls)
+        self.assertIn(f'https://stl.acm.org/meetups/{active.id}/', urls)
+        self.assertNotIn(f'https://stl.acm.org/meetups/{inactive.id}/', urls)
+        self.assertFalse(any('/admin/' in url or '/events/' in url or 'noland' in url for url in urls))
+        robots = self.client.get(reverse('robots'))
+        self.assertContains(robots, 'Sitemap: https://stl.acm.org/sitemap.xml')
+
+    def test_structured_data_cannot_close_its_script_element(self):
+        value = '</script><script>alert(1)</script>'
+        encoded = structured_json({'name': value})
+        self.assertNotIn('<', encoded)
+        self.assertEqual(json.loads(encoded)['name'], value)
